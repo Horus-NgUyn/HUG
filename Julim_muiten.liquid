@@ -1,0 +1,1111 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-scroll-section-{{ ai_gen_id }} {
+    padding: 80px 40px;
+    background-color: {{ block.settings.background_color }};
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-scroll-main-title-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 60px;
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .ai-scroll-main-title-{{ ai_gen_id }}.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-scroll-container-{{ ai_gen_id }} {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 55% 15% 30%;
+    gap: 0;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ai-scroll-right-section-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    padding: 0 20px;
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-scroll-right-section-{{ ai_gen_id }}.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ai-scroll-right-image-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 350px;
+    height: 550px; /* Tăng chiều cao để hiển thị đầy đủ chiều dài */
+    margin-bottom: 0;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-scroll-right-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-scroll-right-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-scroll-right-placeholder-{{ ai_gen_id }} svg {
+    width: 120px;
+    height: 120px;
+  }
+
+  .ai-scroll-right-text-container-{{ ai_gen_id }} {
+    background-color: #ed65a1;
+    border-radius: {{ block.settings.image_border_radius }}px {{ block.settings.image_border_radius }}px {{ block.settings.image_border_radius | times: 2 }}px {{ block.settings.image_border_radius | times: 2 }}px;
+    padding: 15px 30px 5px 30px;
+    margin-top: -15px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .ai-scroll-right-text-{{ ai_gen_id }} {
+    color: #ffffff;
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+  }
+
+  .ai-scroll-right-text-{{ ai_gen_id }} p {
+    margin: 10px;
+  }
+
+  .ai-scroll-center-arrows-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100px;
+    position: relative;
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5555 !important;
+  }
+
+  .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+    width: 200px;
+    height: 100px;
+    position: relative;
+    overflow: visible !important;
+    z-index: 5555 !important;
+  }
+
+  .ai-scroll-center-arrow-row-{{ ai_gen_id }} {
+    position: absolute;
+    width: 100%;
+    height: 25px;
+    overflow: visible !important;
+    z-index: 5555 !important;
+  }
+
+  .ai-scroll-center-arrow-row-top-{{ ai_gen_id }} {
+    top: 25px;
+  }
+
+  .ai-scroll-center-arrow-row-bottom-{{ ai_gen_id }} {
+    top: 25px;
+  }
+
+  /* Mũi tên cơ bản với animation */
+  .ai-scroll-center-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    width: 24px;
+    height: 31px;
+    background: #ed65a1;
+    transform: skewX(-25deg);
+    border-radius: 2px;
+    z-index: 5555 !important;
+    opacity: 0;
+    visibility: visible !important;
+    display: block !important;
+    top: 0px;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  /* Animation cho mũi tên khi hiển thị */
+  .ai-scroll-center-arrow-{{ ai_gen_id }}.animate {
+    opacity: 1;
+    transform: translateX(0) skewX(-25deg);
+  }
+
+  /* Định vị 3 mũi tên theo hàng ngang với animation từ phải sang trái */
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(1) {
+    left: 25%; /* Mũi tên trái */
+    transform: translateX(-50%) translateX(30px) skewX(-25deg);
+    transition-delay: 0.8s;
+  }
+
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(2) {
+    left: 50%; /* Mũi tên giữa */
+    transform: translateX(-50%) translateX(30px) skewX(-25deg);
+    transition-delay: 0.4s;
+  }
+
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(3) {
+    left: 75%; /* Mũi tên phải */
+    transform: translateX(-50%) translateX(30px) skewX(-25deg);
+    transition-delay: 0.2s;
+  }
+
+  /* Animation khi hiển thị */
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(1).animate {
+    transform: translateX(-50%) translateX(0) skewX(-25deg);
+  }
+
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(2).animate {
+    transform: translateX(-50%) translateX(0) skewX(-25deg);
+  }
+
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(3).animate {
+    transform: translateX(-50%) translateX(0) skewX(-25deg);
+  }
+
+  /* Hàng trên - màu đậm */
+  .ai-scroll-center-arrow-top-{{ ai_gen_id }} {
+    background: #ed65a1;
+  }
+
+  /* Hàng dưới - màu nhạt và đối xứng ngược */
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }} {
+    background: #ffecf5;
+    top: 31px; /* Dính liền với hàng trên */
+  }
+
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(1) {
+    left: 25%;
+    transform: translateX(-50%) translateX(30px) skewX(25deg); /* Nghiêng ngược */
+    transition-delay: 0.8s;
+  }
+
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(2) {
+    left: 50%;
+    transform: translateX(-50%) translateX(30px) skewX(25deg); /* Nghiêng ngược */
+    transition-delay: 0.4s;
+  }
+
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(3) {
+    left: 75%;
+    transform: translateX(-50%) translateX(30px) skewX(25deg); /* Nghiêng ngược */
+    transition-delay: 0.2s;
+  }
+
+  /* Animation cho hàng dưới */
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(1).animate {
+    transform: translateX(-50%) translateX(0) skewX(25deg);
+  }
+
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(2).animate {
+    transform: translateX(-50%) translateX(0) skewX(25deg);
+  }
+
+  .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(3).animate {
+    transform: translateX(-50%) translateX(0) skewX(25deg);
+  }
+
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:before,
+  .ai-scroll-center-arrow-{{ ai_gen_id }}:after {
+    display: none;
+  }
+
+  /* Container hoàn chỉnh */
+
+  .ai-scroll-right-section-{{ ai_gen_id }}.animate .ai-scroll-right-text-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-scroll-left-section-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  .ai-scroll-left-images-{{ ai_gen_id }} {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }} {
+    width: 220px;
+    height: 550px; /* Tăng chiều cao để hiển thị đầy đủ chiều dài */
+    border-radius: {{ block.settings.image_border_radius }}px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }}.animate-1 {
+    transition-delay: 1.0s;
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }}.animate-2 {
+    transition-delay: 0.8s;
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }}.animate-3 {
+    transition-delay: 0.6s;
+  }
+
+  /* Trên mobile: hình ảnh hiển thị từ phải sang trái */
+  @media screen and (max-width: 768px) {
+    .ai-scroll-left-image-{{ ai_gen_id }}.animate-1 {
+      transition-delay: 1.0s;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }}.animate-2 {
+      transition-delay: 0.8s;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }}.animate-3 {
+      transition-delay: 0.6s;
+    }
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }}.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ai-scroll-left-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ai-scroll-left-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-scroll-left-placeholder-{{ ai_gen_id }} svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .ai-scroll-left-text-container-{{ ai_gen_id }} {
+    background-color: #ed65a1;
+    border-radius: {{ block.settings.image_border_radius }}px {{ block.settings.image_border_radius }}px {{ block.settings.image_border_radius | times: 2 }}px {{ block.settings.image_border_radius | times: 2 }}px;
+    padding: 15px 30px 5px 30px;
+    margin-top: -15px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 710px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease 1.0s, transform 0.6s ease 1.0s;
+  }
+
+  .ai-scroll-left-text-{{ ai_gen_id }} {
+    color: #ffffff;
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease 1.0s, transform 0.6s ease 1.0s;
+  }
+
+  .ai-scroll-left-text-{{ ai_gen_id }} p {
+    margin: 10px;
+  }
+
+  .ai-scroll-left-section-{{ ai_gen_id }}.animate .ai-scroll-left-text-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-scroll-left-section-{{ ai_gen_id }}.animate .ai-scroll-left-text-container-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-scroll-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ai-scroll-container-{{ ai_gen_id }} {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+      width: 200px;
+      height: 100px;
+      transform: rotate(270deg); /* Xoay mũi tên hướng xuống */
+    }
+
+    /* Hiển thị mũi tên như desktop trên tablet */
+    .ai-scroll-center-arrow-{{ ai_gen_id }} {
+      display: block !important;
+    }
+
+    /* Hiển thị mũi tên theo chiều dọc trên tablet */
+    .ai-scroll-center-arrows-{{ ai_gen_id }} {
+      display: flex;
+      order: 2; /* Đặt mũi tên ở giữa */
+    }
+
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      order: 1; /* Đặt right section lên trên */
+    }
+
+    .ai-scroll-left-section-{{ ai_gen_id }} {
+      order: 3; /* Đặt left section xuống dưới */
+    }
+
+    /* Vô hiệu hóa animations trên tablet nhưng giữ transform cho mũi tên */
+    .ai-scroll-main-title-{{ ai_gen_id }},
+    .ai-scroll-right-section-{{ ai_gen_id }},
+    .ai-scroll-right-text-{{ ai_gen_id }},
+    .ai-scroll-left-image-{{ ai_gen_id }},
+    .ai-scroll-left-text-container-{{ ai_gen_id }},
+    .ai-scroll-left-text-{{ ai_gen_id }} {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Đảm bảo mũi tên hiển thị đúng sau khi xoay */
+    .ai-scroll-center-arrow-{{ ai_gen_id }} {
+      opacity: 1 !important;
+      transition: none !important;
+    }
+
+    /* Reset transform cho từng mũi tên khi được xoay */
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(-25deg) !important;
+    }
+
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(25deg) !important;
+    }
+
+    .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+      transform: rotate(270deg) !important; /* Xoay mũi tên hướng xuống */
+    }
+
+    /* Đảm bảo hình ảnh fill đầy container để tạo overlap hiệu quả */
+    .ai-scroll-right-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    /* Cho hình ảnh bên phải đè lên ô text trên tablet */
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      position: relative !important;
+    }
+    
+    .ai-scroll-right-image-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-right-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    /* Cho hình ảnh bên trái đè lên ô text trên tablet */
+    .ai-scroll-left-images-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-left-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-scroll-container-{{ ai_gen_id }} {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+      width: 200px;
+      height: 100px;
+      transform: rotate(270deg); /* Xoay mũi tên hướng xuống */
+    }
+
+    /* Hiển thị mũi tên như desktop trên mobile */
+    .ai-scroll-center-arrow-{{ ai_gen_id }} {
+      display: block !important;
+    }
+
+    /* Hiển thị mũi tên theo chiều dọc trên mobile */
+    .ai-scroll-center-arrows-{{ ai_gen_id }} {
+      display: flex;
+      order: 2; /* Đặt mũi tên ở giữa */
+    }
+
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      order: 1; /* Đặt right section lên trên */
+    }
+
+    .ai-scroll-left-section-{{ ai_gen_id }} {
+      order: 3; /* Đặt left section xuống dưới */
+    }
+
+    /* Vô hiệu hóa animations trên mobile nhưng giữ transform cho mũi tên */
+    .ai-scroll-main-title-{{ ai_gen_id }},
+    .ai-scroll-right-section-{{ ai_gen_id }},
+    .ai-scroll-right-text-{{ ai_gen_id }},
+    .ai-scroll-left-image-{{ ai_gen_id }},
+    .ai-scroll-left-text-container-{{ ai_gen_id }},
+    .ai-scroll-left-text-{{ ai_gen_id }} {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Đảm bảo mũi tên hiển thị đúng sau khi xoay */
+    .ai-scroll-center-arrow-{{ ai_gen_id }} {
+      opacity: 1 !important;
+      transition: none !important;
+    }
+
+    /* Reset transform cho từng mũi tên khi được xoay */
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(-25deg) !important;
+    }
+
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(25deg) !important;
+    }
+
+    .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+      transform: rotate(270deg) !important; /* Xoay mũi tên hướng xuống */
+    }
+
+    /* Đảm bảo hình ảnh fill đầy container để tạo overlap hiệu quả */
+    .ai-scroll-right-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    /* Cho hình ảnh bên phải đè lên ô text trên mobile */
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      position: relative !important;
+    }
+    
+    .ai-scroll-right-image-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-right-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    /* Cho hình ảnh bên trái đè lên ô text trên mobile */
+    .ai-scroll-left-images-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-left-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    .ai-scroll-main-title-{{ ai_gen_id }} {
+      margin-bottom: 40px;
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      padding: 0 10px;
+    }
+
+    .ai-scroll-left-section-{{ ai_gen_id }} {
+      padding: 0 10px;
+    }
+
+    .ai-scroll-right-image-{{ ai_gen_id }} {
+      max-width: 400px !important; /* Tăng kích thước cho tablet/mobile */
+      height: 500px !important; /* Tăng chiều cao để hiển thị to hơn */
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-right-text-container-{{ ai_gen_id }} {
+      max-width: 400px !important; /* Tăng kích thước text container để phù hợp */
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    .ai-scroll-left-images-{{ ai_gen_id }} {
+      gap: 8px; /* Giảm gap thêm để fit 3 ảnh nhỏ hơn */
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      flex-direction: row !important; /* Đảm bảo hiển thị 1 hàng */
+      justify-content: center !important;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }} {
+      width: 113px; /* Tăng thêm 5px từ 108px */
+      height: 270px !important; /* Thu nhỏ thêm 10% (300px * 0.9 = 270px) */
+    }
+
+    .ai-scroll-left-text-container-{{ ai_gen_id }} {
+      max-width: 355px; /* Đúng bằng tổng width của 3 ảnh: 113px × 3 + 8px × 2 = 355px */
+      z-index: 2 !important;
+      padding-top: 50px !important;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    
+    .ai-scroll-center-arrows-{{ ai_gen_id }} {
+      display: flex;
+      order: 2; /* Giữ mũi tên ở giữa trên mobile nhỏ */
+    }
+
+    /* Vô hiệu hóa animations trên mobile nhỏ nhưng giữ transform cho mũi tên */
+    .ai-scroll-main-title-{{ ai_gen_id }},
+    .ai-scroll-right-section-{{ ai_gen_id }},
+    .ai-scroll-right-text-{{ ai_gen_id }},
+    .ai-scroll-left-image-{{ ai_gen_id }},
+    .ai-scroll-left-text-container-{{ ai_gen_id }},
+    .ai-scroll-left-text-{{ ai_gen_id }} {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .ai-scroll-center-arrows-inner-{{ ai_gen_id }} {
+      width: 200px;
+      height: 100px;
+      transform: rotate(270deg) !important; /* Xoay mũi tên hướng xuống */
+    }
+
+    /* Hiển thị mũi tên như desktop trên mobile nhỏ */
+    .ai-scroll-center-arrow-{{ ai_gen_id }} {
+      display: block !important;
+      opacity: 1 !important;
+      transition: none !important;
+    }
+
+    /* Reset transform cho từng mũi tên khi được xoay */
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(-25deg) !important;
+    }
+
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(1),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(2),
+    .ai-scroll-center-arrow-bottom-{{ ai_gen_id }}:nth-child(3) {
+      transform: translateX(-50%) skewX(25deg) !important;
+    }
+
+    /* Đảm bảo hình ảnh fill đầy container để tạo overlap hiệu quả */
+    .ai-scroll-right-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }} img {
+      object-fit: cover !important;
+      object-position: center !important;
+      height: 100% !important;
+    }
+
+    /* Cho hình ảnh bên phải đè lên ô text trên mobile nhỏ */
+    .ai-scroll-right-section-{{ ai_gen_id }} {
+      position: relative !important;
+    }
+    
+    .ai-scroll-right-image-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-right-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    /* Cho hình ảnh bên trái đè lên ô text trên mobile nhỏ */
+    .ai-scroll-left-images-{{ ai_gen_id }} {
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-left-text-container-{{ ai_gen_id }} {
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+
+    .ai-scroll-left-images-{{ ai_gen_id }} {
+      flex-direction: row !important; /* Hiển thị 1 hàng trên mobile nhỏ */
+      align-items: center;
+      gap: 6px; /* Gap nhỏ hơn cho mobile nhỏ với ảnh thu nhỏ */
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      justify-content: center !important;
+    }
+
+    .ai-scroll-left-section-{{ ai_gen_id }} {
+      margin-left: 0;
+    }
+
+    .ai-scroll-left-image-{{ ai_gen_id }} {
+      width: 104px; /* Tăng thêm 5px từ 99px */
+      height: 252px !important; /* Thu nhỏ thêm 10% (280px * 0.9 = 252px) */
+    }
+
+    .ai-scroll-left-text-container-{{ ai_gen_id }} {
+      max-width: 324px; /* Đúng bằng tổng width của 3 ảnh: 104px × 3 + 6px × 2 = 324px */
+      z-index: 2 !important;
+      padding-top: 50px !important;
+    }
+
+    .ai-scroll-right-image-{{ ai_gen_id }} {
+      max-width: 350px; /* Tăng kích thước cho mobile nhỏ */
+      height: 450px !important; /* Tăng chiều cao */
+      z-index: 3 !important;
+      margin-bottom: -30px !important;
+      position: relative !important;
+    }
+
+    .ai-scroll-right-text-container-{{ ai_gen_id }} {
+      max-width: 350px; /* Tăng kích thước text container cho mobile nhỏ */
+      z-index: 2 !important;
+      padding-top: 50px !important;
+      position: relative !important;
+      margin-top: 0 !important;
+    }
+  }
+{% endstyle %}
+
+<scroll-animation-{{ ai_gen_id }}
+  class="ai-scroll-section-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.main_title != blank %}
+    <h2 class="ai-scroll-main-title-{{ ai_gen_id }}">
+      {{ block.settings.main_title }}
+    </h2>
+  {% endif %}
+
+  <div class="ai-scroll-container-{{ ai_gen_id }}">
+    <div class="ai-scroll-left-section-{{ ai_gen_id }}">
+      <div class="ai-scroll-left-images-{{ ai_gen_id }}">
+        {% for i in (1..3) %}
+          {% assign image_key = 'left_image_' | append: i %}
+          {% assign image = block.settings[image_key] %}
+          <div class="ai-scroll-left-image-{{ ai_gen_id }} animate-{{ i }}">
+            {% if image %}
+              <img
+                src="{{ image | image_url: width: 340 }}"
+                alt="{{ image.alt | escape }}"
+                loading="lazy"
+                width="340"
+                height="700"
+              >
+            {% else %}
+              <div class="ai-scroll-left-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if block.settings.left_text != blank %}
+        <div class="ai-scroll-left-text-container-{{ ai_gen_id }}">
+          <div class="ai-scroll-left-text-{{ ai_gen_id }}">
+            {{ block.settings.left_text }}
+          </div>
+        </div>
+      {% else %}
+        <div class="ai-scroll-left-text-container-{{ ai_gen_id }}">
+          <div class="ai-scroll-empty-state-{{ ai_gen_id }}">
+            Add shared description text for the left images
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-scroll-center-arrows-{{ ai_gen_id }}">
+      <div class="ai-scroll-center-arrows-inner-{{ ai_gen_id }}">
+        <div class="ai-scroll-center-arrow-row-{{ ai_gen_id }} ai-scroll-center-arrow-row-top-{{ ai_gen_id }}">
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-top-{{ ai_gen_id }}"></div>
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-top-{{ ai_gen_id }}"></div>
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-top-{{ ai_gen_id }}"></div>
+        </div>
+        <div class="ai-scroll-center-arrow-row-{{ ai_gen_id }} ai-scroll-center-arrow-row-bottom-{{ ai_gen_id }}">
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-bottom-{{ ai_gen_id }}"></div>
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-bottom-{{ ai_gen_id }}"></div>
+          <div class="ai-scroll-center-arrow-{{ ai_gen_id }} ai-scroll-center-arrow-bottom-{{ ai_gen_id }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-scroll-right-section-{{ ai_gen_id }}">
+      <div class="ai-scroll-right-image-{{ ai_gen_id }}">
+        {% if block.settings.right_image %}
+          <img
+            src="{{ block.settings.right_image | image_url: width: 620 }}"
+            alt="{{ block.settings.right_image.alt | escape }}"
+            loading="lazy"
+            width="620"
+            height="700"
+          >
+        {% else %}
+          <div class="ai-scroll-right-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-scroll-empty-state-{{ ai_gen_id }}">
+              Add your main image here
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      
+      {% if block.settings.right_text != blank %}
+        <div class="ai-scroll-right-text-container-{{ ai_gen_id }}">
+          <div class="ai-scroll-right-text-{{ ai_gen_id }}">
+            {{ block.settings.right_text }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</scroll-animation-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ScrollAnimation{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.hasAnimated = false;
+      }
+
+      connectedCallback() {
+        this.setupIntersectionObserver();
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          threshold: 0.3,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !this.hasAnimated) {
+              this.triggerAnimations();
+              this.hasAnimated = true;
+            }
+          });
+        }, options);
+
+        this.observer.observe(this);
+      }
+
+      triggerAnimations() {
+        // Kiểm tra nếu là tablet hoặc mobile thì không chạy animation
+        if (window.innerWidth <= 1024) {
+          const mainTitle = this.querySelector('.ai-scroll-main-title-{{ ai_gen_id }}');
+          const rightSection = this.querySelector('.ai-scroll-right-section-{{ ai_gen_id }}');
+          const leftSection = this.querySelector('.ai-scroll-left-section-{{ ai_gen_id }}');
+          const leftImages = this.querySelectorAll('.ai-scroll-left-image-{{ ai_gen_id }}');
+          const arrowsTop = this.querySelectorAll('.ai-scroll-center-arrow-top-{{ ai_gen_id }}');
+          const arrowsBottom = this.querySelectorAll('.ai-scroll-center-arrow-bottom-{{ ai_gen_id }}');
+
+          // Hiển thị tất cả ngay lập tức trên tablet/mobile
+          if (mainTitle) mainTitle.classList.add('animate');
+          if (rightSection) rightSection.classList.add('animate');
+          if (leftSection) leftSection.classList.add('animate');
+          leftImages.forEach(image => image.classList.add('animate'));
+          arrowsTop.forEach(arrow => arrow.classList.add('animate'));
+          arrowsBottom.forEach(arrow => arrow.classList.add('animate'));
+          return;
+        }
+
+        // Animation cho desktop
+        const mainTitle = this.querySelector('.ai-scroll-main-title-{{ ai_gen_id }}');
+        const rightSection = this.querySelector('.ai-scroll-right-section-{{ ai_gen_id }}');
+        const leftSection = this.querySelector('.ai-scroll-left-section-{{ ai_gen_id }}');
+        const leftImages = this.querySelectorAll('.ai-scroll-left-image-{{ ai_gen_id }}');
+        const arrowsTop = this.querySelectorAll('.ai-scroll-center-arrow-top-{{ ai_gen_id }}');
+        const arrowsBottom = this.querySelectorAll('.ai-scroll-center-arrow-bottom-{{ ai_gen_id }}');
+
+        if (mainTitle) {
+          mainTitle.classList.add('animate');
+        }
+
+        // Bước 1: Hiện hình bên phải trước
+        setTimeout(() => {
+          rightSection.classList.add('animate');
+        }, 200);
+
+        // Bước 2: Hiện mũi tên (từ phải sang trái)
+        setTimeout(() => {
+          arrowsTop.forEach(arrow => {
+            arrow.classList.add('animate');
+          });
+          arrowsBottom.forEach(arrow => {
+            arrow.classList.add('animate');
+          });
+        }, 600);
+
+        // Bước 3: Cuối cùng mới hiện hình bên trái
+        setTimeout(() => {
+          leftImages.forEach(image => {
+            image.classList.add('animate');
+          });
+          leftSection.classList.add('animate');
+        }, 1200);
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+    }
+
+    customElements.define('scroll-animation-{{ ai_gen_id }}', ScrollAnimation{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Smooth scroll animation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Main title"
+    },
+    {
+      "type": "richtext",
+      "id": "main_title",
+      "label": "Section title",
+      "default": "<p>Discover Our Collection</p>"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Right side content"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_image",
+      "label": "Main image"
+    },
+    {
+      "type": "richtext",
+      "id": "right_text",
+      "label": "Description text",
+      "default": "<p>Discover our featured product with exceptional quality and design.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Left side content"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_1",
+      "label": "Left image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_2",
+      "label": "Left image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_image_3",
+      "label": "Left image 3"
+    },
+    {
+      "type": "richtext",
+      "id": "left_text",
+      "label": "Shared description",
+      "default": "<p>Explore our collection of carefully curated items.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Arrow animation"
+    },
+    {
+      "type": "range",
+      "id": "arrow_speed",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "s",
+      "label": "Arrow speed",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Smooth scroll animation"
+    }
+  ]
+}
+{% endschema %}

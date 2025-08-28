@@ -1,0 +1,410 @@
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-promo-popup-overlay-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ai-promo-popup-overlay-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-promo-popup-container-{{ ai_gen_id }} {
+    position: relative;
+    max-width: {{ block.settings.popup_width }}px;
+    max-height:90vh;
+    margin: 20px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-promo-popup-overlay-{{ ai_gen_id }}.active .ai-promo-popup-container-{{ ai_gen_id }} {
+    transform: scale(1);
+  }
+
+  .ai-promo-popup-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-promo-popup-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-promo-popup-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 300px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;}
+
+  .ai-promo-popup-placeholder-{{ ai_gen_id }} svg {
+    width: 100px;
+    height: 100px;
+    opacity: 0.5;
+  }
+
+  .ai-promo-popup-action-button-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: {{ block.settings.button_bottom_spacing }}px;
+    right: {{ block.settings.button_right_spacing }}px;
+    padding: {{ block.settings.button_padding }}px {{ block.settings.button_padding | times: 2 }}px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-weight: 600;
+    font-size: {{ block.settings.button_font_size }}px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .ai-promo-popup-action-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }}:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;stroke: #333;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-promo-popup-container-{{ ai_gen_id }} {
+      max-width: 90%;
+      margin: 10px;
+    }
+
+    .ai-promo-popup-action-button-{{ ai_gen_id }} {
+      bottom: {{ block.settings.button_bottom_spacing | times: 0.7 }}px;
+      right: {{ block.settings.button_right_spacing | times: 0.7 }}px;padding: {{ block.settings.button_padding | times: 0.8 }}px {{ block.settings.button_padding | times: 1.6 }}px;font-size: {{ block.settings.button_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<promo-popup-{{ ai_gen_id }}
+  class="ai-promo-popup-{{ ai_gen_id }}"
+  data-display-frequency="{{ block.settings.display_frequency }}"
+  data-delay="{{ block.settings.display_delay }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-promo-popup-overlay-{{ ai_gen_id }}" id="ai-promo-popup-overlay-{{ ai_gen_id }}">
+    <div class="ai-promo-popup-container-{{ ai_gen_id }}">
+      <button class="ai-promo-popup-close-{{ ai_gen_id }}" aria-label="Đóng popup">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="ai-promo-popup-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.popup_image %}
+          <img
+            src="{{ block.settings.popup_image | image_url: width: 800 }}"
+            alt="{{ block.settings.popup_image.alt | escape }}"
+            class="ai-promo-popup-image-{{ ai_gen_id }}"
+            loading="lazy"width="{{ block.settings.popup_image.width }}"
+            height="{{ block.settings.popup_image.height }}"
+          >
+        {% else %}
+          <div class="ai-promo-popup-placeholder-{{ ai_gen_id }}">
+            {{'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+
+        {% if block.settings.button_text != blank %}
+          <a href="{{ block.settings.button_link }}" class="ai-promo-popup-action-button-{{ ai_gen_id }}">
+            {{ block.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</promo-popup-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PromoPopup{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.overlay = null;
+        this.closeButton = null;
+        this.displayFrequency = null;
+        this.displayDelay = null;
+        this.cookieName = 'ai-promo-popup-{{ ai_gen_id }}-dismissed';
+      }
+
+      connectedCallback() {
+        this.overlay = this.querySelector('#ai-promo-popup-overlay-{{ ai_gen_id }}');
+        this.closeButton = this.querySelector('.ai-promo-popup-close-{{ ai_gen_id }}');
+        this.displayFrequency = parseInt(this.dataset.displayFrequency) || 1;
+        this.displayDelay = parseInt(this.dataset.displayDelay) || 3;
+
+        this.setupEventListeners();this.checkAndShowPopup();
+      }
+
+      setupEventListeners() {
+        this.closeButton.addEventListener('click', () => {
+          this.closePopup();
+        });
+
+        this.overlay.addEventListener('click', (e) => {
+          if (e.target === this.overlay) {
+            this.closePopup();
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.overlay.classList.contains('active')) {
+            this.closePopup();
+          }
+        });
+      }
+
+      checkAndShowPopup() {
+        if (this.shouldShowPopup()) {
+          setTimeout(() => {
+            this.showPopup();
+          }, this.displayDelay * 1000);
+        }
+      }
+
+      shouldShowPopup() {
+        const lastDismissed = this.getCookie(this.cookieName);
+        if (!lastDismissed) return true;
+
+        const daysSinceLastDismissed = (Date.now() - parseInt(lastDismissed)) / (1000 * 60 * 60 * 24);
+        return daysSinceLastDismissed >= this.displayFrequency;
+      }
+
+      showPopup() {
+        this.overlay.classList.add('active');document.body.style.overflow = 'hidden';
+      }
+
+      closePopup() {
+        this.overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        this.setCookie(this.cookieName, Date.now().toString(), this.displayFrequency);
+      }
+
+      getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      setCookie(name, value, days) {
+        const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+      }
+    }
+
+    customElements.define('promo-popup-{{ ai_gen_id }}', PromoPopup{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup Khuyến Mãi",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hình ảnh"
+    },
+    {
+      "type": "image_picker",
+      "id": "popup_image",
+      "label": "Hình ảnh popup"
+    },
+    {
+      "type": "header",
+      "content": "Nút hành động"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Văn bản nút",
+      "default": "Mua ngay"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Liên kết nút"
+    },
+    {
+      "type": "range",
+      "id": "button_bottom_spacing",
+      "min": 10,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Khoảng cách từ dưới",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "button_right_spacing",
+      "min": 10,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Khoảng cách từ phải",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding nút",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Kích thước chữ nút",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Màu nút",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Màu nút khi hover",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Màu chữ nút",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bo góc nút",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Cài đặt hiển thị"
+    },
+    {
+      "type": "range",
+      "id": "display_frequency",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "d",
+      "label": "Tần suất hiển thị",
+      "default": 7
+    },
+    {
+      "type": "range",
+      "id": "display_delay",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "label": "Độ trễ hiển thị",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Kiểu dáng"
+    },
+    {
+      "type": "range",
+      "id": "popup_width",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Chiều rộng popup",
+      "default": 500
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Màu nền",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bo góc",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup Khuyến Mãi"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,540 @@
+{% doc %}
+  @prompt
+    Create a custom section with a title at the top, subtitle below it, and a two-column layout with collapsible content rows on the left (4 rows) and an image on the right. Each collapsible row should have an icon at the beginning of the header bar, exactly like Shopify's default collapsible content template. The collapsible rows should have expandable content with smooth animations. Include customization options for the title, subtitle, collapsible row content (with icon selection for each row), and image selection. Make it responsive so on mobile the image appears below the collapsible content. Use the same styling and functionality as Shopify's native collapsible content section., tôi muốn bộ chọn icon nhiều hơn giống như collapsible row và nội dung cũng như icon không bị vỡ như hiện tại, nội dung và icon đang hiển thị bị vỡ, không được sắc nét, dùng font: 15px Montserrat, sans-serif cho nội dung và chỉnh sửa để hiển thị nội dung không bị rõ, hiển thị thật sắc nét và đầy đủ
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collapsible-section-{{ ai_gen_id }} {
+    padding: 40px 0;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .ai-collapsible-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-collapsible-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-collapsible-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 16px 0;
+    font-weight: 600;
+    line-height: 1.2;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .ai-collapsible-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+    line-height: 1.5;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .ai-collapsible-content-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .ai-collapsible-left-{{ ai_gen_id }} {
+    order: 1;
+  }
+
+  .ai-collapsible-right-{{ ai_gen_id }} {
+    order: 2;
+  }
+
+  .ai-collapsible-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    border-radius: {{ settings.media_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-collapsible-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-collapsible-image-placeholder-{{ ai_gen_id }} {
+    background-color: #f4f4f4;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: {{ settings.media_radius }}px;
+  }
+
+  .ai-collapsible-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-collapsible-item-{{ ai_gen_id }} {
+    border-bottom: 1px solid rgba(18, 18, 18, 0.08);
+  }
+
+  .ai-collapsible-item-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .ai-collapsible-summary-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    min-height: 60px;
+    user-select: none;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .ai-collapsible-summary-{{ ai_gen_id }}::-webkit-details-marker {
+    display: none;
+  }
+
+  .ai-collapsible-icon-{{ ai_gen_id }} {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: {{ block.settings.icon_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-collapsible-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2;
+    fill: none;
+    stroke: currentColor;
+    vector-rendering: optimizeQuality;
+    shape-rendering: geometricPrecision;
+  }
+
+  .ai-collapsible-icon-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    max-width: 24px;
+    max-height: 24px;
+  }
+
+  .ai-collapsible-summary-text-{{ ai_gen_id }} {
+    flex: 1;
+    font-size: 18px;
+    font-weight: {% if block.settings.heading_bold %}700{% else %}500{% endif %};
+    color: {{ block.settings.heading_color }};
+    line-height: 1.4;
+    word-break: break-word;
+    hyphens: auto;
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ai-collapsible-chevron-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: {{ block.settings.heading_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-collapsible-chevron-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2;
+    fill: none;
+    stroke: currentColor;
+    vector-rendering: optimizeQuality;
+    shape-rendering: geometricPrecision;
+  }
+
+  .ai-collapsible-details-{{ ai_gen_id }}[open] .ai-collapsible-chevron-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-collapsible-content-inner-{{ ai_gen_id }} {
+    padding: 0 0 24px 0;
+    color: {{ block.settings.content_color }};
+    line-height: 1.6;
+    animation: ai-collapsible-slide-down-{{ ai_gen_id }} 0.3s ease-out;
+    word-break: break-word;
+    hyphens: auto;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ai-collapsible-content-inner-{{ ai_gen_id }} p {
+    margin: 0 0 16px 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .ai-collapsible-content-inner-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-collapsible-content-inner-{{ ai_gen_id }} * {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  @keyframes ai-collapsible-slide-down-{{ ai_gen_id }} {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collapsible-content-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .ai-collapsible-left-{{ ai_gen_id }} {
+      order: 2;
+    }
+
+    .ai-collapsible-right-{{ ai_gen_id }} {
+      order: 1;
+    }
+
+    .ai-collapsible-summary-{{ ai_gen_id }} {
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .ai-collapsible-summary-text-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .ai-collapsible-content-inner-{{ ai_gen_id }} {
+      padding: 0 0 20px 0;
+      font-size: 15px;
+    }
+
+    .ai-collapsible-content-inner-{{ ai_gen_id }} p {
+      font-size: 15px;
+    }
+
+    .ai-collapsible-content-inner-{{ ai_gen_id }} * {
+      font-size: 15px;
+    }
+
+    .ai-collapsible-icon-{{ ai_gen_id }} {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ai-collapsible-icon-image-{{ ai_gen_id }} {
+      max-width: 20px;
+      max-height: 20px;
+    }
+
+    .ai-collapsible-chevron-{{ ai_gen_id }} {
+      width: 18px;
+      height: 18px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-collapsible-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-collapsible-container-{{ ai_gen_id }}">
+    <div class="ai-collapsible-header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-collapsible-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <div class="ai-collapsible-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-collapsible-content-{{ ai_gen_id }}">
+      <div class="ai-collapsible-left-{{ ai_gen_id }}">
+        {% for i in (1..4) %}
+          {% liquid
+            assign row_title_key = 'row_' | append: i | append: '_title'
+            assign row_content_key = 'row_' | append: i | append: '_content'
+            assign row_icon_key = 'row_' | append: i | append: '_icon'
+            
+            assign row_title = block.settings[row_title_key]
+            assign row_content = block.settings[row_content_key]
+            assign row_icon = block.settings[row_icon_key]
+          %}
+          
+          {% if row_title != blank %}
+            <details class="ai-collapsible-details-{{ ai_gen_id }} ai-collapsible-item-{{ ai_gen_id }}">
+              <summary class="ai-collapsible-summary-{{ ai_gen_id }}">
+                <div class="ai-collapsible-icon-{{ ai_gen_id }}">
+                  {% if row_icon %}
+                    <img
+                      src="{{ row_icon | image_url: width: 48 }}"
+                      alt="{{ row_icon.alt | escape }}"
+                      class="ai-collapsible-icon-image-{{ ai_gen_id }}"
+                      loading="lazy"
+                      width="24"
+                      height="24"
+                    >
+                  {% else %}
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  {% endif %}
+                </div>
+                <div class="ai-collapsible-summary-text-{{ ai_gen_id }}">{{ row_title }}</div>
+                <div class="ai-collapsible-chevron-{{ ai_gen_id }}">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+              </summary>
+              {% if row_content != blank %}
+                <div class="ai-collapsible-content-inner-{{ ai_gen_id }}">
+                  {{ row_content }}
+                </div>
+              {% endif %}
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="ai-collapsible-right-{{ ai_gen_id }}">
+        <div class="ai-collapsible-image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.image %}
+            <img
+              src="{{ block.settings.image | image_url: width: 800 }}"
+              alt="{{ block.settings.image.alt | escape }}"
+              class="ai-collapsible-image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ block.settings.image.width }}"
+              height="{{ block.settings.image.height }}"
+            >
+          {% else %}
+            <div class="ai-collapsible-image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collapsible content",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "<p>Find answers to common questions below</p>"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Row heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_bold",
+      "label": "Bold row headings",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Row content color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Row 1"
+    },
+    {
+      "type": "text",
+      "id": "row_1_title",
+      "label": "Heading",
+      "default": "What is your return policy?"
+    },
+    {
+      "type": "richtext",
+      "id": "row_1_content",
+      "label": "Content",
+      "default": "<p>We offer a 30-day return policy for all unused items in original packaging.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "row_1_icon",
+      "label": "Icon image"
+    },
+    {
+      "type": "header",
+      "content": "Row 2"
+    },
+    {
+      "type": "text",
+      "id": "row_2_title",
+      "label": "Heading",
+      "default": "How long does shipping take?"
+    },
+    {
+      "type": "richtext",
+      "id": "row_2_content",
+      "label": "Content",
+      "default": "<p>Standard shipping takes 3-5 business days, while express shipping takes 1-2 business days.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "row_2_icon",
+      "label": "Icon image"
+    },
+    {
+      "type": "header",
+      "content": "Row 3"
+    },
+    {
+      "type": "text",
+      "id": "row_3_title",
+      "label": "Heading",
+      "default": "Do you offer international shipping?"
+    },
+    {
+      "type": "richtext",
+      "id": "row_3_content",
+      "label": "Content",
+      "default": "<p>Yes, we ship to most countries worldwide. International shipping rates vary by location.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "row_3_icon",
+      "label": "Icon image"
+    },
+    {
+      "type": "header",
+      "content": "Row 4"
+    },
+    {
+      "type": "text",
+      "id": "row_4_title",
+      "label": "Heading",
+      "default": "How can I track my order?"
+    },
+    {
+      "type": "richtext",
+      "id": "row_4_content",
+      "label": "Content",
+      "default": "<p>Once your order ships, you'll receive a tracking number via email to monitor your package.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "row_4_icon",
+      "label": "Icon image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collapsible content"
+    }
+  ]
+}
+{% endschema %}

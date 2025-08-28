@@ -1,0 +1,268 @@
+{% schema %}
+{
+  "name": "Comparison Table",
+  "tag": "section",
+  "class": "comparison-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Comparison Table",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .comparison-section {
+    background: #f8f9fa;
+    padding: 80px 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    zoom: 1.2; /* Phóng to lên 120% */
+  }
+
+  .comparison-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 80px;
+  }
+
+  .comparison-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1.2;
+    flex: 0 0 350px;
+    text-align: left;
+  }
+
+  .comparison-content {
+    flex: 1;
+    max-width: 700px;
+  }
+
+  .comparison-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+  }
+
+  .label-vixpack {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .label-vixpack img {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .label-others {
+    font-size: 24px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .comparison-table {
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .feature-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .feature-row:last-child {
+    border-bottom: none;
+  }
+
+  .feature-name {
+    background:rgb(0, 0, 0);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .check-vixpack {
+    background: #fff;
+    color: #27ae60;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    padding: 20px;
+    border-right: 1px solid #f0f0f0;
+  }
+
+  .check-others {
+    background: #fff;
+    color: #e74c3c;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .feature-row:hover .feature-name {
+    background: #E91E63;
+  }
+
+  .feature-row:hover .check-vixpack,
+  .feature-row:hover .check-others {
+    background: #f8f9fa;
+  }
+
+  @media (max-width: 1024px) {
+    .comparison-container {
+      flex-direction: column;
+      gap: 40px;
+      text-align: center;
+    }
+
+    .comparison-title {
+      flex: none;
+      text-align: center;
+      font-size: 40px;
+    }
+
+    .comparison-content {
+      max-width: 100%;
+    }
+
+    .comparison-labels {
+      justify-content: center;
+      gap: 80px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .comparison-section {
+      padding: 40px 15px;
+      zoom: 1.1;
+    }
+
+    .comparison-title {
+      font-size: 32px;
+    }
+
+    .comparison-container {
+      gap: 30px;
+    }
+
+    .comparison-labels {
+      gap: 60px;
+      margin-bottom: 15px;
+    }
+
+    .label-vixpack img {
+      max-height: 30px;
+    }
+
+    .label-others {
+      font-size: 20px;
+    }
+
+    .feature-name {
+      font-size: 14px;
+      padding: 15px 10px;
+    }
+
+    .check-vixpack,
+    .check-others {
+      font-size: 24px;
+      padding: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .comparison-section {
+      zoom: 1;
+    }
+
+    .comparison-title {
+      font-size: 28px;
+    }
+
+    .comparison-labels {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+
+    .feature-row {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .feature-name {
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .check-vixpack {
+      border-right: none;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+</style>
+
+<div class="comparison-section">
+  <div class="comparison-container">
+    <h2 class="comparison-title">What Makes<br>VixPack Special</h2>
+
+    <div class="comparison-content">
+      <div class="comparison-labels">
+        <div class="label-vixpack">
+          <img src="https://cdn.shopify.com/s/files/1/0943/9441/7472/files/Logo_VixPack_Official_Black.png?v=1753080584" alt="VixPack Logo" />
+        </div>
+        <div class="label-others">Others</div>
+      </div>
+
+      <div class="comparison-table">
+        <div class="feature-row">
+          <div class="feature-name">Built-in Vacuum Compression</div>
+          <div class="check-vixpack">✓</div>
+          <div class="check-others">✕</div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-name">TSA-Approved Lock</div>
+          <div class="check-vixpack">✓</div>
+          <div class="check-others">✕</div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-name">Water-Resistant Materials</div>
+          <div class="check-vixpack">✓</div>
+          <div class="check-others">✕</div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-name">Carry-On Friendly Size</div>
+          <div class="check-vixpack">✓</div>
+          <div class="check-others">✕</div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-name">Expandable Design</div>
+          <div class="check-vixpack">✓</div>
+          <div class="check-others">✕</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

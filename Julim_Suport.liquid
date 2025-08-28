@@ -1,0 +1,379 @@
+{% doc %}
+  @prompt
+    Create a responsive section with a title at the top. On desktop: display 4 vertical cards in a horizontal row, each with image on top and text below. On mobile: display cards as horizontal layout with image on left and text on right (with option to alternate image/text position for each card). Include settings to customize the image and text position for each card on mobile.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-card-grid-{{ ai_gen_id }} {
+    padding: 40px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-card-grid__title-{{ ai_gen_id }} {
+    text-align: center;
+    margin: 0 0 40px;
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-card-grid__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .ai-card-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+  }
+
+  .ai-card__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .ai-card__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .ai-card__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .ai-card__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-card__content-{{ ai_gen_id }} {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-card__title-{{ ai_gen_id }} {
+    margin: 0 0 12px;
+    font-size: {{ block.settings.card_title_size }}px;
+    color: {{ block.settings.card_title_color }};
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .ai-card__text-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.card_text_size }}px;
+    color: {{ block.settings.card_text_color }};
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-card-grid__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .ai-card-{{ ai_gen_id }} {
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .ai-card--reverse-{{ ai_gen_id }} {
+      flex-direction: row-reverse;
+    }
+
+    .ai-card__image-wrapper-{{ ai_gen_id }} {
+      width: 120px;
+      flex-shrink: 0;
+      aspect-ratio: 1;
+    }
+
+    .ai-card__content-{{ ai_gen_id }} {
+      padding: 16px;
+      justify-content: center;
+    }
+
+    .ai-card__title-{{ ai_gen_id }} {
+      margin-bottom: 8px;
+      font-size: {{ block.settings.card_title_size | times: 0.9 }}px;
+    }
+
+    .ai-card__text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.card_text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-card-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.title != blank %}
+    <h2 class="ai-card-grid__title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+  {% endif %}
+
+  <div class="ai-card-grid__container-{{ ai_gen_id }}">
+    {% for i in (1..4) %}
+      {% liquid
+        assign card_image_key = 'card_' | append: i | append: '_image'
+        assign card_title_key = 'card_' | append: i | append: '_title'
+        assign card_text_key = 'card_' | append: i | append: '_text'
+        assign card_mobile_reverse_key = 'card_' | append: i | append: '_mobile_reverse'
+
+        assign card_image = block.settings[card_image_key]
+        assign card_title = block.settings[card_title_key]
+        assign card_text = block.settings[card_text_key]
+        assign card_mobile_reverse = block.settings[card_mobile_reverse_key]
+      %}
+
+      <div class="ai-card-{{ ai_gen_id }} {% if card_mobile_reverse %}ai-card--reverse-{{ ai_gen_id }}{% endif %}">
+        <div class="ai-card__image-wrapper-{{ ai_gen_id }}">
+          {% if card_image %}
+            <img
+              src="{{ card_image | image_url: width: 400 }}"
+              alt="{{ card_image.alt | escape }}"
+              class="ai-card__image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ card_image.width }}"
+              height="{{ card_image.height }}"
+            >
+          {% else %}
+            <div class="ai-card__image-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="ai-card__content-{{ ai_gen_id }}">
+          {% if card_title != blank %}
+            <h3 class="ai-card__title-{{ ai_gen_id }}">{{ card_title }}</h3>
+          {% endif %}
+          {% if card_text != blank %}
+            <div class="ai-card__text-{{ ai_gen_id }}">{{ card_text }}</div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Responsive card grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Featured content"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card title size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "card_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Card title 1"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_text",
+      "label": "Text",
+      "default": "Add your card description here."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_mobile_reverse",
+      "label": "Reverse image and text on mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Card title 2"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_text",
+      "label": "Text",
+      "default": "Add your card description here."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_mobile_reverse",
+      "label": "Reverse image and text on mobile",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Card title 3"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_text",
+      "label": "Text",
+      "default": "Add your card description here."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_mobile_reverse",
+      "label": "Reverse image and text on mobile",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Card title 4"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_text",
+      "label": "Text",
+      "default": "Add your card description here."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_mobile_reverse",
+      "label": "Reverse image and text on mobile",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Responsive card grid"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

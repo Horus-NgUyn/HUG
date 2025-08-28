@@ -1,0 +1,832 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+{% assign white_color = '#ffffff' %}
+  /* Container chính với gradient hồng */
+  .ai-comparison-table-{{ ai_gen_id }} {
+    background: linear-gradient(135deg, #ED66A1, #FF69B4);
+    padding: {{ block.settings.section_padding | default: 60 }}px 20px;
+    position: relative;
+    overflow: visible;
+    margin: 80px auto;
+  }
+
+  /* Wrapper căn giữa */
+  .ai-comparison-table__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width | default: 800 }}px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+
+  /* Tiêu đề section */
+  .ai-comparison-table__header-{{ ai_gen_id }} {
+    color: {{ block.settings.header_color | default: '#ffffff' }};
+    font-family: Archivo, sans-serif;
+    font-size: {{ block.settings.header_size | default: 32 }}px;
+    font-weight: 700;
+    margin: 0 0 0px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Header tách riêng */
+  .ai-comparison-table__separated-header-{{ ai_gen_id }} {
+    margin-bottom: 0;
+  }
+
+  .ai-comparison-table__header-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    max-width: {{ block.settings.max_width | default: 800 }}px;
+    margin: 0 auto;
+    min-height: 90px;
+    /* Loại bỏ transform để căn chỉnh chính xác */
+    border: 2px solid transparent; /* Đồng bộ với border table */
+    box-sizing: border-box;
+  } 
+  
+  .ai-comparison-table__empty-cell-separated-{{ ai_gen_id }} {
+    background: transparent;
+    border-right: 2px solid {{ white_color }};
+    box-sizing: border-box;
+  }
+
+  .ai-comparison-table__image-cell-separated-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: {{ white_color }};
+    color: #333333;
+    opacity: 1 !important;
+    border-right: 2px solid {{ white_color }};
+    box-sizing: border-box;
+  }
+
+  .ai-comparison-table__text-cell-separated-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-family: Archivo, sans-serif;
+    font-weight: 600;
+    font-size: {{ block.settings.header_row_text_size | default: 18}}px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.3;
+    white-space: normal;
+    box-sizing: border-box;
+  }
+
+  /* Container bảng */
+  .ai-comparison-table__table-container-{{ ai_gen_id }} {
+    position: relative;
+    margin-top: -2px;
+  }
+
+  /* Ô ảnh trong bảng */
+  .ai-comparison-table__image-cell-{{ ai_gen_id }} {
+    background: transparent;
+    border: none;
+    padding: 0px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-comparison-table__image-cell-{{ ai_gen_id }} img {
+    width: auto;
+    height: 100%;
+    max-width: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  /* Bảng so sánh */
+  .ai-comparison-table__table-{{ ai_gen_id }} {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: transparent;
+    border-radius: 0px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    border: 2px solid {{ white_color }};
+    /* Đảm bảo table có cùng max-width với header */
+    max-width: {{ block.settings.max_width | default: 800 }}px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* Header row */
+  .ai-comparison-table__header-row-{{ ai_gen_id }} {
+    background-color: transparent;
+  }
+
+  .ai-comparison-table__header-cell-{{ ai_gen_id }} {
+    padding: 20px;
+    font-family: Archivo, sans-serif;
+    font-weight: 600;
+    font-size: {{ block.settings.header_row_text_size | default: 18 }}px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: {{ white_color }};
+    text-align: center;
+    vertical-align: middle;
+    border: none;
+    box-sizing: border-box;
+  }
+
+  /* Ô trống đầu tiên */
+  .ai-comparison-table__empty-header-{{ ai_gen_id }} {
+    width: 33.33%;
+    background: transparent;
+    border: none;
+  }
+
+  /* Cột ảnh */
+  .ai-comparison-table__image-header-{{ ai_gen_id }} {
+    width: 33.33%;
+    background: transparent;
+    border: none;
+    position: relative;
+  }
+
+  /* Cột text Traditional Curlers */
+  .ai-comparison-table__text-header-{{ ai_gen_id }} {
+    width: 33.33%;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+  }
+
+  /* Cột PRO CURL - nền trắng */
+  .ai-comparison-table__pro-header-{{ ai_gen_id }},
+  .ai-comparison-table__pro-cell-{{ ai_gen_id }} {
+    background-color: {{ white_color }};
+    color: #333333;
+    width: 33.33%;
+    box-sizing: border-box;
+  }
+
+  /* Cột Traditional Curlers */
+  .ai-comparison-table__other-header-{{ ai_gen_id }},
+  .ai-comparison-table__other-cell-{{ ai_gen_id }} {
+    background-color: rgba(255,255,255,0.1);
+    color: #ffffff;
+    width: 33.33%;
+    box-sizing: border-box;
+  }
+
+  /* Hàng tính năng */
+  .ai-comparison-table__row-{{ ai_gen_id }} {
+    /* Border được xử lý bởi từng ô riêng lẻ */
+  }
+
+  /* Ô tính năng text */
+  .ai-comparison-table__feature-cell-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 16px 24px;
+    color: {{ white_color }};
+    font-size: {{ block.settings.feature_text_size | default: 18 }}px;
+    font-weight: 500;
+    background: transparent;
+    vertical-align: middle;
+    border-right: 2px solid {{ white_color }};
+    border-bottom: 2px solid {{ white_color }};
+    width: 33.33%;
+    box-sizing: border-box;
+  }
+
+  /* Ô icon PRO */
+  .ai-comparison-table__pro-cell-{{ ai_gen_id }} {
+    padding: 16px 0;
+    text-align: center;
+    vertical-align: middle;
+    border-top: none;
+    background-color: #ffffff;
+    border-bottom: 2px solid {{ white_color }};
+    border-right: 2px solid {{ white_color }};
+    box-sizing: border-box;
+  }
+
+  /* Ô icon Traditional Curlers */
+  .ai-comparison-table__other-cell-{{ ai_gen_id }} {
+    padding: 16px 0;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 2px solid {{ white_color }};
+    border-right: none;
+    background-color: rgba(255,255,255,0.1);
+    color: {{ white_color }};
+    box-sizing: border-box;
+  }
+
+  /* Loại bỏ border-bottom cho hàng cuối */
+  .ai-comparison-table__row-{{ ai_gen_id }}:last-child .ai-comparison-table__feature-cell-{{ ai_gen_id }},
+  .ai-comparison-table__row-{{ ai_gen_id }}:last-child .ai-comparison-table__pro-cell-{{ ai_gen_id }},
+  .ai-comparison-table__row-{{ ai_gen_id }}:last-child .ai-comparison-table__other-cell-{{ ai_gen_id }} {
+    border-bottom: none;
+  }
+
+/* Khung chứa icon CHECK - nhỏ hơn */
+.ai-comparison-table__checkmark-{{ ai_gen_id }} {
+  width: 35px;
+  height: 35px;
+}
+
+.ai-comparison-table__checkmark-{{ ai_gen_id }} svg {
+  width: 32px;
+  height: 32px;
+  stroke: #ED66A1;
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  background-color: {{ white_color }};
+  border: 3px solid #ED66A1;
+  border-radius: 50%;
+  padding: 6px;
+  fill: none;
+  box-sizing: border-box;
+}
+
+/* Khung chứa icon CROSS - to hơn */
+.ai-comparison-table__cross-{{ ai_gen_id }} {
+  width: 55px;
+  height: 55px;
+}
+
+.ai-comparison-table__cross-{{ ai_gen_id }} svg {
+  width: 45px;
+  height: 45px;
+  stroke: {{ white_color }};
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  fill: none;
+  box-sizing: border-box;
+}
+
+/* Icon chung */
+.ai-comparison-table__icon-{{ ai_gen_id }} {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    .ai-comparison-table-{{ ai_gen_id }} {
+      padding: 40px 15px;
+      margin: 60px auto 20px;
+    }
+    
+    .ai-comparison-table__container-{{ ai_gen_id }} {
+      padding: 0;
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    .ai-comparison-table__image-cell-{{ ai_gen_id }} {
+      padding: 6px;
+    }
+    
+    .ai-comparison-table__image-cell-{{ ai_gen_id }} img {
+      max-width: 50px;
+      max-height: 35px;
+    }
+    
+    .ai-comparison-table__header-cell-{{ ai_gen_id }} {
+      padding: 15px 10px;
+      font-size: 14px;
+    }
+    
+    .ai-comparison-table__feature-cell-{{ ai_gen_id }} {
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    
+    .ai-comparison-table__header-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr 1fr;
+      max-width: 100%;
+      margin: 0;
+      border: none;
+      box-sizing: content-box;
+    }
+    
+    .ai-comparison-table__table-{{ ai_gen_id }} {
+      max-width: 100%;
+      margin: 0;
+    }
+    
+    .ai-comparison-table__feature-cell-{{ ai_gen_id }} {
+      width: 33.33%;
+    }
+    
+    .ai-comparison-table__pro-cell-{{ ai_gen_id }} {
+      width: 33.33%;
+    }
+    
+    .ai-comparison-table__other-cell-{{ ai_gen_id }} {
+      width: 33.33%;
+    }
+  }
+
+  /* Icon checkmark màu ngược - cho Time Saving ở cột Traditional Curlers */
+  .ai-comparison-table__checkmark-reverse-{{ ai_gen_id }} {
+    width: 35px;
+    height: 35px;
+  }
+
+  .ai-comparison-table__checkmark-reverse-{{ ai_gen_id }} svg {
+    width: 28px;
+    height: 28px;
+    stroke: #ffffff;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    background-color: #FF69B4;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    padding: 6px;
+    fill: none;
+    box-sizing: border-box;
+  }
+
+{% endstyle %}
+
+<div class="ai-comparison-table-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-comparison-table__container-{{ ai_gen_id }}">
+    {% if block.settings.header_text != blank %}
+      <h2 class="ai-comparison-table__header-{{ ai_gen_id }}">
+        {{ block.settings.header_text }}
+      </h2>
+    {% endif %}
+
+    <!-- Hàng header tách riêng -->
+    <div class="ai-comparison-table__separated-header-{{ ai_gen_id }}">
+      <div class="ai-comparison-table__header-grid-{{ ai_gen_id }}">
+        <!-- Ô trống đầu tiên -->
+        <div class="ai-comparison-table__empty-cell-separated-{{ ai_gen_id }}">
+          &nbsp;
+        </div>
+        <!-- Ô ảnh ở giữa -->
+        <div class="ai-comparison-table__image-cell-separated-{{ ai_gen_id }}">
+          <div class="ai-comparison-table__image-cell-{{ ai_gen_id }}">
+            {% if block.settings.product_image %}
+              <img 
+                src="{{ block.settings.product_image | image_url: width: 300 }}"
+                alt="{{ block.settings.product_image.alt | escape | default: 'Product image' }}"
+                loading="lazy"
+              >
+            {% endif %}
+          </div>
+        </div>
+        <!-- Traditional Curlers header -->
+        <div class="ai-comparison-table__text-cell-separated-{{ ai_gen_id }}" style="line-height: 1.4; font-size: calc({{ block.settings.header_row_text_size | default: 16 }}px + 2px); text-transform: none;">
+          Traditional<br>Curlers
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-comparison-table__table-container-{{ ai_gen_id }}">
+      <table class="ai-comparison-table__table-{{ ai_gen_id }}">
+          {% for i in (1..7) %}
+            {% liquid
+              assign feat_key = 'feature_' | append: i
+              assign en_key   = feat_key | append: '_enabled'
+            %}
+            {% if block.settings[en_key] and block.settings[feat_key] != blank %}
+              <tr class="ai-comparison-table__row-{{ ai_gen_id }}">
+                <td class="ai-comparison-table__feature-cell-{{ ai_gen_id }}">
+                  {{ block.settings[feat_key] }}
+                </td>
+                <td class="ai-comparison-table__pro-cell-{{ ai_gen_id }}">
+                  <span class="ai-comparison-table__icon-{{ ai_gen_id }} ai-comparison-table__checkmark-{{ ai_gen_id }}">
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="4 12 9 17 20 6" fill="none"/>
+                    </svg>
+                  </span>
+                </td>
+                <td class="ai-comparison-table__other-cell-{{ ai_gen_id }}">
+                  {% if i == 2 %}
+                    <!-- Feature 2 (Time Saving) hiển thị check màu ngược -->
+                    <span class="ai-comparison-table__icon-{{ ai_gen_id }} ai-comparison-table__checkmark-reverse-{{ ai_gen_id }}">
+                      <svg viewBox="0 0 24 24">
+                        <polyline points="4 12 9 17 20 6" fill="none"/>
+                      </svg>
+                    </span>
+                  {% else %}
+                    <!-- Các feature khác hiển thị cross -->
+                    <span class="ai-comparison-table__icon-{{ ai_gen_id }} ai-comparison-table__cross-{{ ai_gen_id }}">
+                      <svg viewBox="0 0 24 24">
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                        <line x1="6" y1="18" x2="18" y2="6" />
+                      </svg>
+                    </span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product comparison table",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "header_text",
+      "label": "Header text",
+      "default": "PRO CURL V.01 vs OTHERS"
+    },
+    {
+      "type": "text",
+      "id": "pro_column_title",
+      "label": "Pro column title",
+      "default": "PRO CURL V.01"
+    },
+    {
+      "type": "text",
+      "id": "other_column_title",
+      "label": "Other column title",
+      "default": "Traditional Curlers"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_1_enabled",
+      "label": "Enable feature 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_1",
+      "label": "Feature 1",
+      "default": "Beginner Friendly"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_2_enabled",
+      "label": "Enable feature 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_2",
+      "label": "Feature 2",
+      "default": "Time Saving"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_3_enabled",
+      "label": "Enable feature 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_3",
+      "label": "Feature 3",
+      "default": "Negative Ion Protection"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_4_enabled",
+      "label": "Enable feature 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_4",
+      "label": "Feature 4",
+      "default": "Anti-Tangle Tech"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_5_enabled",
+      "label": "Enable feature 5",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_5",
+      "label": "Feature 5",
+      "default": "Smart Temperature Control"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_6_enabled",
+      "label": "Enable feature 6",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_6",
+      "label": "Feature 6",
+      "default": "Auto Shut-off function"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_7_enabled",
+      "label": "Enable feature 7",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_7",
+      "label": "Feature 7",
+      "default": "Anti-burn safety shell"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFB6C1"
+    },
+    {
+      "type": "color",
+      "id": "background_color_secondary",
+      "label": "Background secondary color",
+      "default": "#FF69B4"
+    },
+    {
+      "type": "color",
+      "id": "header_color",
+      "label": "Header text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "image_background_color",
+      "label": "Image background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "table_background_color",
+      "label": "Table background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "header_row_background",
+      "label": "Header row background",
+      "default": "#F8F9FA"
+    },
+    {
+      "type": "color",
+      "id": "header_row_text_color",
+      "label": "Header row text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "feature_text_color",
+      "label": "Feature text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "pro_column_background",
+      "label": "Pro column background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "pro_column_text_color",
+      "label": "Pro column text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "other_column_background",
+      "label": "Other column background",
+      "default": "#FFB6C1"
+    },
+    {
+      "type": "color",
+      "id": "other_column_text_color",
+      "label": "Other column text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "color",
+      "id": "checkmark_color",
+      "label": "Checkmark color",
+      "default": "#28A745"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Cross color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Element spacing",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Section border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "table_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Table border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "cell_padding",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Cell padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_offset",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Image offset from top",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Image settings"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 100,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Image width",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 80,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Image height",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "image_padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Image padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "header_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Header text size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "header_row_text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Header row text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "feature_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Feature text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product comparison table"
+    }
+  ]
+}
+{% endschema %}

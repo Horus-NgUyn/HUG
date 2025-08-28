@@ -1,0 +1,233 @@
+{% schema %}
+{
+  "name": "Product Specifications",
+  "tag": "section",
+  "class": "specifications-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Specifications",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .specifications-section {
+    background: #000;
+    color: #fff;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+  }
+
+  .specifications-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .specifications-content {
+    padding-right: 40px;
+  }
+
+  .specifications-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 35px;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .spec-row {
+    border-bottom: 1px solid #666;
+  }
+
+  .spec-row:last-child {
+    border-bottom: none;
+  }
+
+  .spec-label, .spec-value {
+    border-bottom: 1px solid #666;
+  }
+
+  .spec-row:last-child .spec-label,
+  .spec-row:last-child .spec-value {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    padding: 18px 0;
+    vertical-align: top;
+    width: 150px;
+    line-height: 1.6;
+  }
+
+  .spec-value {
+    font-size: 16px;
+    font-weight: 300;
+    color: #ccc;
+    padding: 18px 0 18px 30px;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .spec-value strong {
+    color: #fff;
+    font-weight: 400;
+  }
+
+  .specifications-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 40px;
+  }
+
+  .specifications-image img {
+    max-width: 120%;
+    height: auto;
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 1024px) {
+    .specifications-container {
+      grid-template-columns: 1fr;
+      gap: 35px;
+      text-align: center;
+    }
+
+    .specifications-content {
+      padding-right: 0;
+    }
+
+    .specifications-image {
+      padding-left: 0;
+      order: -1;
+    }
+
+    .specifications-title {
+      font-size: 36px;
+      margin-bottom: 25px;
+    }
+
+    .spec-table {
+      margin: 0 auto;
+      max-width: 600px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .specifications-section {
+      padding: 30px 15px;
+    }
+
+    .specifications-title {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .spec-label {
+      font-size: 14px;
+      padding: 15px 0;
+      width: 120px;
+    }
+
+    .spec-value {
+      font-size: 14px;
+      padding: 15px 0 15px 20px;
+    }
+
+    .specifications-container {
+      gap: 25px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .specifications-section {
+      padding: 25px 15px;
+    }
+
+    .specifications-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .spec-label {
+      font-size: 13px;
+      width: 100px;
+      padding: 12px 0;
+    }
+
+    .spec-value {
+      font-size: 13px;
+      padding: 12px 0 12px 15px;
+    }
+  }
+</style>
+
+<div class="specifications-section">
+  <div class="specifications-container">
+    <div class="specifications-content">
+      <h2 class="specifications-title">Specifications</h2>
+      
+      <table class="spec-table">
+        <tr class="spec-row">
+          <td class="spec-label">Volume</td>
+          <td class="spec-value">22-48 Liters (when using compression)</td>
+        </tr>
+        
+        <tr class="spec-row">
+          <td class="spec-label">Dimensions</td>
+          <td class="spec-value">
+            19 x 13 x 6-8 (L x W x H)<br>
+            8 inch max width when using extension
+          </td>
+        </tr>
+        
+        <tr class="spec-row">
+          <td class="spec-label">Weight</td>
+          <td class="spec-value">
+            Without weight handle: <strong>3.7lb</strong><br>
+            With weight handle: <strong>4.1lb</strong>
+          </td>
+        </tr>
+        
+        <tr class="spec-row">
+          <td class="spec-label">Materials</td>
+                     <td class="spec-value">
+             <strong>Main fabric:</strong> 100% Recycled Nylon 900D Face wax<br>
+             coating & Back PUcoating, GRS certified, PFC free<br>
+             <strong>Back panel fabric:</strong> 100% Polyester<br>
+             <strong>Interlock Lining:</strong> 100% Polyester 230T<br>
+             <strong>Mesh:</strong> 100% Polyester<br>
+             <strong>Webbing:</strong> Polypropylene Webbing, Nylon<br>
+             Herringbone Webbing<br>
+             <strong>Foams:</strong> Polyethylene Foams, EVA Foams, Neoprene<br>
+             Foams
+           </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="specifications-image">
+      <img src="https://cdn.shopify.com/s/files/1/0943/9441/7472/files/specification.png?v=1753009839" 
+           alt="VixPack Technical Specifications Diagram" 
+           width="600" 
+           height="400" />
+    </div>
+  </div>
+</div>

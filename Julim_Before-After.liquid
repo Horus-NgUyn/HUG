@@ -1,0 +1,514 @@
+{% doc %}
+  @prompt
+    Create a before/after comparison section with a title at the top and 3 pairs of cards displayed horizontally on desktop. Each pair contains 2 cards (before and after), with each card having an image at the top and a text block below. Add animation that reveals each card sequentially from right to left when the section comes into view. The section should be responsive and stack vertically on mobile devices., tôi muốn 3 cặp thẻ nằm trên cùng 1 hàng ngang duy nhất, label được căn giữa. tăng chiều cao hình ảnh lên. xóa các text đi, giảm kích thước lại để tạo 1 khoảng cách với 2 lề là 40px, tôi muốn giảm kích thước các thẻ lại một chút để cách 2 bên lề trang web là 40px, giảm kích thước chiều ngang các thẻ lại một chút và tăng khoảng cách 2 bên lề lên thành 80px, sửa animation lại là hiển thị lần lượt từ phải sang trái từng cặp thẻ chứ không phải là từng thẻ, tôi muốn có thể tùy chỉnh khoảng cách của các thẻ, kích thước của các thẻ
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  before-after-section-{{ ai_gen_id }},
+  .ai-before-after-section-{{ ai_gen_id }} {
+    padding: 5px {{ block.settings.section_padding }}px 60px {{ block.settings.section_padding }}px;
+    background-color: {{ block.settings.background_color }} !important;
+    width: 100%;
+    display: block;
+  }
+
+  .ai-before-after-container-{{ ai_gen_id }} {
+    max-width: calc(100% - {{ block.settings.section_padding | times: 2 }}px);margin: 0 auto;
+  }
+
+  .ai-before-after-title-{{ ai_gen_id }} {
+    text-align: center;
+    margin: 20px 0px 40px 0px;
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    font-weight: 600;
+  }
+
+  .ai-before-after-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, {{ block.settings.card_width }}px));
+    gap: {{ block.settings.card_spacing }}px;
+    justify-content: center;
+  }
+
+  .ai-before-after-pair-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.pair_spacing }}px;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .ai-before-after-pair-{{ ai_gen_id }}.animate {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ai-before-after-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-before-after-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+  }
+
+  .ai-before-after-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.image_height }}px;
+    overflow: hidden;
+  }
+
+  .ai-before-after-image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-before-after-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-before-after-image-placeholder-{{ ai_gen_id }} svg {
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
+  }
+
+  .ai-before-after-content-{{ ai_gen_id }} {
+    padding: 15px;
+    text-align: center;
+  }
+
+  .ai-before-after-label-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ai-before-after-before-label-{{ ai_gen_id }} {
+    color: {{ block.settings.before_label_color }};
+  }
+
+  .ai-before-after-after-label-{{ ai_gen_id }} {
+    color: {{ block.settings.after_label_color }};
+  }
+
+  @media screen and (max-width: 990px) {
+    before-after-section-{{ ai_gen_id }},
+    .ai-before-after-section-{{ ai_gen_id }} {
+      padding: 60px {{ block.settings.section_padding | times: 0.75 }}px;
+    }
+
+    .ai-before-after-container-{{ ai_gen_id }} {
+      max-width: calc(100% - {{ block.settings.section_padding | times: 1.5 }}px);
+    }
+
+    .ai-before-after-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, minmax(0, 300px));
+      gap: {{ block.settings.card_spacing | times: 0.75 }}px;
+      justify-content: center;
+    }
+
+    .ai-before-after-pair-{{ ai_gen_id }} {
+      gap: {{ block.settings.pair_spacing | times: 0.75 }}px;
+      /* Tắt animation trên tablet */
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+      transition: none !important;
+    }
+
+    .ai-before-after-card-{{ ai_gen_id }}:hover {
+      /* Tắt hover effect trên tablet */
+      transform: none !important;
+    }
+
+    .ai-before-after-image-wrapper-{{ ai_gen_id }} {
+      height: {{ block.settings.image_height | times: 0.75 }}px;
+    }
+
+    .ai-before-after-content-{{ ai_gen_id }} {
+      padding: 8px 15px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    before-after-section-{{ ai_gen_id }},
+    .ai-before-after-section-{{ ai_gen_id }} {
+      padding: 40px {{ block.settings.section_padding | times: 0.5 }}px;
+    }
+
+    .ai-before-after-container-{{ ai_gen_id }} {
+      max-width: calc(100% - {{ block.settings.section_padding }}px);
+    }
+
+    .ai-before-after-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.card_spacing }}px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .ai-before-after-pair-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+      gap: {{ block.settings.pair_spacing }}px;
+      /* Tắt animation trên mobile */
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+      transition: none !important;
+    }
+
+    .ai-before-after-card-{{ ai_gen_id }}:hover {
+      /* Tắt hover effect trên mobile */
+      transform: none !important;
+    }
+
+    .ai-before-after-title-{{ ai_gen_id }} {
+      margin-bottom: 30px;
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-before-after-image-wrapper-{{ ai_gen_id }} {
+      height: {{ block.settings.image_height | times: 0.6 }}px;
+    }
+
+    .ai-before-after-content-{{ ai_gen_id }} {
+      padding: 6px 15px;
+    }
+  }
+{% endstyle %}
+
+<before-after-section-{{ ai_gen_id }}
+  class="ai-before-after-section-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-before-after-container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="ai-before-after-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+    {% endif %}
+
+    <div class="ai-before-after-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign before_image_key = 'before_image_' | append: i
+          assign after_image_key = 'after_image_' | append: i
+
+          assign before_image = block.settings[before_image_key]
+          assign after_image = block.settings[after_image_key]
+        %}
+
+        <div class="ai-before-after-pair-{{ ai_gen_id }}" data-pair="{{ i }}">
+          <div class="ai-before-after-card-{{ ai_gen_id }}">
+            <div class="ai-before-after-image-wrapper-{{ ai_gen_id }}">
+              {% if before_image %}
+                <img
+                  src="{{ before_image | image_url: width: 300}}"
+                  alt="{{ before_image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ before_image.width }}"
+                  height="{{ before_image.height }}"
+                >
+              {% else %}
+                <div class="ai-before-after-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="ai-before-after-content-{{ ai_gen_id }}">
+              <div class="ai-before-after-label-{{ ai_gen_id }} ai-before-after-before-label-{{ ai_gen_id }}">
+                {{ block.settings.before_label }}
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-before-after-card-{{ ai_gen_id }}">
+            <div class="ai-before-after-image-wrapper-{{ ai_gen_id }}">
+              {% if after_image %}
+                <img
+                  src="{{ after_image | image_url: width: 300 }}"
+                  alt="{{ after_image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ after_image.width }}"
+                  height="{{ after_image.height }}"
+                >
+              {% else %}
+                <div class="ai-before-after-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div><div class="ai-before-after-content-{{ ai_gen_id }}">
+              <div class="ai-before-after-label-{{ ai_gen_id }} ai-before-after-after-label-{{ ai_gen_id }}">
+                {{ block.settings.after_label }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</before-after-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BeforeAfterSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.pairs = this.querySelectorAll('.ai-before-after-pair-{{ ai_gen_id }}');
+        this.observer = null;
+      }
+
+      connectedCallback() {
+        this.setupIntersectionObserver();
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+
+      setupIntersectionObserver() {
+        // Kiểm tra nếu là mobile hoặc tablet thì không chạy animation
+        if (window.innerWidth <= 990) {
+          // Hiển thị tất cả pairs ngay lập tức cho mobile/tablet
+          this.pairs.forEach((pair) => {
+            pair.classList.add('animate');
+          });
+          return;
+        }
+
+        const options = {
+          threshold: 0.2,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.animatePairs();this.observer.unobserve(entry.target);
+            }
+          });
+        }, options);
+
+        this.observer.observe(this);
+      }
+
+      animatePairs() {
+        this.pairs.forEach((pair, index) => {
+          setTimeout(() => {
+            pair.classList.add('animate');
+          }, (2 - index) * 200);
+        });
+      }
+    }
+
+    customElements.define('before-after-section-{{ ai_gen_id }}', BeforeAfterSection{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before after comparison",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Amazing Transformations"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Section side padding",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Card layout"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Card width",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 150,
+      "max": 550,
+      "step": 10,
+      "unit": "px",
+      "label": "Image height",
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between card pairs",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "pair_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between before/after cards",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "before_label",
+      "label": "Before label",
+      "default": "Before"
+    },
+    {
+      "type": "color",
+      "id": "before_label_color",
+      "label": "Before label color",
+      "default": "#e74c3c"
+    },
+    {
+      "type": "text",
+      "id": "after_label",
+      "label": "After label",
+      "default": "After"
+    },
+    {
+      "type": "color",
+      "id": "after_label_color",
+      "label": "After label color",
+      "default": "#27ae60"
+    },
+    {
+      "type": "header",
+      "content": "Comparison 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image_1",
+      "label": "Before image"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image_1",
+      "label": "After image"
+    },
+    {
+      "type": "header",
+      "content": "Comparison 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image_2",
+      "label": "Before image"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image_2",
+      "label": "After image"
+    },
+    {
+      "type": "header",
+      "content": "Comparison 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image_3",
+      "label": "Before image"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image_3",
+      "label": "After image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before after comparison"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

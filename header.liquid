@@ -1,0 +1,803 @@
+{% schema %}
+{
+  "name": "Custom Header with Logo",
+  "tag": "section",
+  "class": "custom-header-with-logo",
+  "settings": [
+    {
+      "type": "text",
+      "id": "sale_text",
+      "label": "Sale banner text",
+      "default": "SummerSale – This Week: $25 Extra Off!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Header with Logo",
+      "category": "Header"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+/* SummerSale banner */
+.sale-banner {
+  background-color: #243ad9;
+  color: #fff;
+  text-align: center;
+  padding: 4px 0;
+  font-weight: 600;
+  font-size: 12px;
+  font-family: 'Segoe UI', sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.sale-banner.hidden {
+  transform: translateY(-100%);
+}
+
+/* Header container */
+.custom-header__wrapper {
+  background-color: #000;
+  color: #fff;
+  position: fixed;
+  top: 24px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  font-family: 'Segoe UI', sans-serif;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.custom-header__wrapper.scrolled {
+  background-color: #fff;
+  color: #333;
+  top: 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.custom-header__wrapper.hidden {
+  transform: translateY(-100%);
+}
+
+/* Top row */
+.custom-header__top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 40px;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: visible; /* FIXED: Cho phép dropdown hiển thị */
+  height: 32px;
+  z-index: 1001; /* FIXED: Đảm bảo z-index */
+}
+
+.custom-header__top-row.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
+  margin: 0;
+}
+
+.custom-header__wrapper.scrolled .custom-header__top-row {
+  border-bottom: none;
+}
+
+.custom-header__top-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.custom-header__top-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+  position: relative;
+  z-index: 1002; /* FIXED: Tăng z-index */
+}
+
+.custom-header__top-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.custom-header__top-item i {
+  font-size: 16px;
+}
+
+.custom-header__top-divider {
+  width: 1px;
+  height: 20px;
+  background-color: #666;
+  margin: 0 5px;
+}
+
+/* Bottom row */
+.custom-header__bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 26px 40px;
+  height: 86px;
+  position: relative;
+  z-index: 999; /* FIXED: Thấp hơn top-row */
+}
+
+.custom-header__navigation {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.custom-header__nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.custom-header__nav-link:hover {
+  color: #1e90ff;
+}
+
+.custom-header__wrapper.scrolled .custom-header__nav-link {
+  color: #333;
+}
+
+.custom-header__wrapper.scrolled .custom-header__nav-link:hover {
+  color: #1e90ff;
+}
+
+/* Logo */
+.custom-header__logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 75px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-header__logo a {
+  position: relative;
+  display: block;
+  line-height: 0;
+  height: 75px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-header__logo img {
+  max-height: 75px;
+  object-fit: contain;
+}
+
+.custom-header__logo-white,
+.custom-header__logo-black {
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 75px;
+  object-fit: contain;
+}
+
+.custom-header__logo-white {
+  opacity: 1;
+}
+
+.custom-header__logo-black {
+  opacity: 0;
+}
+
+.custom-header__wrapper.scrolled .custom-header__logo-white {
+  opacity: 0;
+}
+
+.custom-header__wrapper.scrolled .custom-header__logo-black {
+  opacity: 1;
+}
+
+/* Icons */
+.custom-header__icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 18px;
+}
+
+.custom-header__icons a {
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.custom-header__wrapper.scrolled .custom-header__icons a {
+  color: #333;
+}
+
+.custom-header__cart-icon {
+  position: relative;
+}
+
+.custom-header__cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.custom-header__wrapper.scrolled .custom-header__cart-count {
+  color: #333;
+}
+
+/* Location Selector - COMPLETELY FIXED */
+.custom-header__location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  color: #fff;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  z-index: 1003; /* FIXED: Cao nhất */
+}
+
+.custom-header__location:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.custom-header__wrapper.scrolled .custom-header__location {
+  color: #333;
+}
+
+.custom-header__wrapper.scrolled .custom-header__location:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+#selectedLocationCode {
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+#selectedLocationName {
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.custom-header__location i {
+  pointer-events: none;
+}
+
+/* FIXED: Dropdown với z-index cực cao */
+.custom-header__location-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  min-width: 200px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  display: none;
+  z-index: 99999; /* FIXED: Z-index cực cao */
+  overflow: hidden;
+  transform: translateZ(0); /* FIXED: Force hardware acceleration */
+}
+
+.custom-header__location-dropdown.show {
+  display: block;
+  animation: dropdownSlideIn 0.25s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.custom-header__location-item {
+  padding: 14px 18px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 99999; /* FIXED: Đảm bảo có thể click */
+}
+
+.custom-header__location-item:last-child {
+  border-bottom: none;
+}
+
+.custom-header__location-item:hover {
+  background: #f8f9fa;
+  color: #007bff;
+  transform: translateX(2px);
+}
+
+.custom-header__location-item:active {
+  background: #e9ecef;
+}
+
+/* Currency Display */
+.custom-header__currency-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.custom-header__wrapper.scrolled .custom-header__currency-wrapper {
+  color: #333;
+}
+
+.custom-header__currency-flag {
+  font-size: 18px;
+  display: none;
+}
+
+.custom-header__currency-code {
+  font-size: 14px;
+  font-weight: 600;
+  display: none;
+}
+
+/* Scrolled state colors */
+.custom-header__wrapper.scrolled .custom-header__top-item,
+.custom-header__wrapper.scrolled #selectedLocationCode,
+.custom-header__wrapper.scrolled #selectedLocationName,
+.custom-header__wrapper.scrolled #currencyCode {
+  color: #333;
+}
+
+.custom-header__wrapper.scrolled .custom-header__top-divider {
+  background-color: #ccc;
+}
+
+/* Body spacing */
+body {
+  padding-top: 142px;
+}
+
+/* Responsive */
+@media screen and (max-width: 1200px) {
+  .custom-header__top-center {
+    gap: 25px;
+  }
+  
+  .custom-header__navigation {
+    gap: 18px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .custom-header__top-center {
+    gap: 20px;
+  }
+
+  .custom-header__top-item span {
+    display: none;
+  }
+
+  .custom-header__top-divider {
+    display: none;
+  }
+
+  #selectedLocationName {
+    display: none !important;
+  }
+
+  .custom-header__navigation {
+    gap: 12px;
+  }
+
+  .custom-header__nav-link {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .custom-header__top-row {
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px 20px;
+    overflow: visible;
+  }
+
+  .custom-header__top-center {
+    position: static;
+    transform: none;
+  }
+
+  .custom-header__bottom-row {
+    flex-direction: column;
+    height: auto;
+    padding: 15px 20px;
+  }
+
+  .custom-header__navigation {
+    order: 2;
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  .custom-header__logo {
+    position: static;
+    transform: none;
+    order: 1;
+    margin: 0;
+  }
+
+  .custom-header__icons {
+    order: 3;
+    margin-top: 8px;
+  }
+
+  body {
+    padding-top: 158px;
+  }
+
+  .custom-header__wrapper.scrolled {
+    top: 0;
+  }
+
+  .custom-header__location-dropdown {
+    right: -10px;
+    min-width: 180px;
+  }
+}
+
+/* FIXED: Override any conflicting styles */
+.custom-header__location-dropdown * {
+  z-index: inherit;
+}
+
+.custom-header__location-dropdown .custom-header__location-item {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+</style>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<!-- Sale Banner -->
+<div class="sale-banner">
+  {{ section.settings.sale_text }}
+</div>
+
+<!-- Header -->
+<header class="custom-header__wrapper" role="banner" aria-label="Main header">
+  <!-- Top Row -->
+  <div class="custom-header__top-row">
+    <div class="custom-header__top-center">
+      <div class="custom-header__top-item">
+        <i class="fas fa-shield-alt"></i>
+        <span>3 year warranty</span>
+      </div>
+      <div class="custom-header__top-divider"></div>
+      <div class="custom-header__top-item">
+        <i class="fas fa-undo"></i>
+        <span>100 days returns</span>
+      </div>
+      <div class="custom-header__top-divider"></div>
+      <div class="custom-header__top-item">
+        <i class="fas fa-shipping-fast"></i>
+        <span>Fast shipping</span>
+      </div>
+    </div>
+
+    <div class="custom-header__top-right">
+      <!-- Location Selector -->
+      <div class="custom-header__location" id="locationSelector">
+        <i class="fas fa-map-marker-alt"></i>
+        <span id="selectedLocationCode">Location</span>
+        <span id="selectedLocationName" style="display:none;"></span>
+        <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+        
+        <div class="custom-header__location-dropdown" id="locationDropdown">
+          <div class="custom-header__location-item" data-code="US" data-name="United States" data-flag="🇺🇸" data-currency="USD">🇺🇸 United States</div>
+          <div class="custom-header__location-item" data-code="GB" data-name="United Kingdom" data-flag="🇬🇧" data-currency="GBP">🇬🇧 United Kingdom</div>
+          <div class="custom-header__location-item" data-code="CA" data-name="Canada" data-flag="🇨🇦" data-currency="CAD">🇨🇦 Canada</div>
+          <div class="custom-header__location-item" data-code="AU" data-name="Australia" data-flag="🇦🇺" data-currency="AUD">🇦🇺 Australia</div>
+          <div class="custom-header__location-item" data-code="DE" data-name="Germany" data-flag="🇩🇪" data-currency="EUR">🇩🇪 Germany</div>
+          <div class="custom-header__location-item" data-code="FR" data-name="France" data-flag="🇫🇷" data-currency="EUR">🇫🇷 France</div>
+          <div class="custom-header__location-item" data-code="JP" data-name="Japan" data-flag="🇯🇵" data-currency="JPY">🇯🇵 Japan</div>
+          <div class="custom-header__location-item" data-code="KR" data-name="South Korea" data-flag="🇰🇷" data-currency="KRW">🇰🇷 South Korea</div>
+          <div class="custom-header__location-item" data-code="SG" data-name="Singapore" data-flag="🇸🇬" data-currency="SGD">🇸🇬 Singapore</div>
+          <div class="custom-header__location-item" data-code="VN" data-name="Vietnam" data-flag="🇻🇳" data-currency="VND">🇻🇳 Vietnam</div>
+        </div>
+      </div>
+      
+      <!-- Currency Display -->
+      <div class="custom-header__currency-wrapper">
+        <span class="custom-header__currency-flag" id="currencyFlag"></span>
+        <span class="custom-header__currency-code" id="currencyCode"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="custom-header__bottom-row">
+    <!-- Navigation -->
+    <nav class="custom-header__navigation" aria-label="Primary navigation">
+      <a href="/" class="custom-header__nav-link">Home</a>
+      <a href="/pages/about" class="custom-header__nav-link">About Us</a>
+      <a href="/products" class="custom-header__nav-link">Products</a>
+      <a href="/pages/order-lookup" class="custom-header__nav-link">Order Lookup</a>
+      <a href="/pages/support" class="custom-header__nav-link">Support</a>
+      <a href="/pages/blog" class="custom-header__nav-link">Blog</a>
+    </nav>
+
+    <!-- Logo -->
+    <div class="custom-header__logo">
+      <a href="/">
+        <img src="https://cdn.shopify.com/s/files/1/0943/9441/7472/files/Logo_VixPack_Official_White.png?v=1753080584" alt="VixPack Logo" class="custom-header__logo-white" />
+        <img src="https://cdn.shopify.com/s/files/1/0943/9441/7472/files/Logo_VixPack_Official_Black.png?v=1753080584" alt="VixPack Logo" class="custom-header__logo-black" />
+      </a>
+    </div>
+
+    <!-- Icons -->
+    <div class="custom-header__icons" aria-label="Utility navigation">
+      <a href="/search" aria-label="Search"><i class="fas fa-search"></i></a>
+      <a href="/pages/wishlist" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+      <a href="/cart" aria-label="Cart" class="custom-header__cart-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="custom-header__cart-count">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+// Country data
+const countryData = {
+  'US': { name: 'United States', flag: '🇺🇸', currency: 'USD' },
+  'GB': { name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP' },
+  'CA': { name: 'Canada', flag: '🇨🇦', currency: 'CAD' },
+  'AU': { name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
+  'DE': { name: 'Germany', flag: '🇩🇪', currency: 'EUR' },
+  'FR': { name: 'France', flag: '🇫🇷', currency: 'EUR' },
+  'JP': { name: 'Japan', flag: '🇯🇵', currency: 'JPY' },
+  'KR': { name: 'South Korea', flag: '🇰🇷', currency: 'KRW' },
+  'SG': { name: 'Singapore', flag: '🇸🇬', currency: 'SGD' },
+  'VN': { name: 'Vietnam', flag: '🇻🇳', currency: 'VND' }
+};
+
+// Initialize when DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+  initializeLocation();
+  setupLocationEvents();
+});
+
+// Setup event listeners with better error handling
+function setupLocationEvents() {
+  const locationSelector = document.getElementById('locationSelector');
+  const dropdown = document.getElementById('locationDropdown');
+  
+  if (!locationSelector || !dropdown) {
+    console.error('Location elements not found');
+    return;
+  }
+
+  // Click to toggle dropdown
+  locationSelector.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Location selector clicked');
+    
+    // Close any other open dropdowns first
+    document.querySelectorAll('.custom-header__location-dropdown.show').forEach(dd => {
+      if (dd !== dropdown) dd.classList.remove('show');
+    });
+    
+    // Toggle this dropdown
+    dropdown.classList.toggle('show');
+    
+    console.log('Dropdown show state:', dropdown.classList.contains('show'));
+  });
+
+  // Handle clicks on dropdown items
+  const locationItems = dropdown.querySelectorAll('.custom-header__location-item');
+  console.log('Found location items:', locationItems.length);
+  
+  locationItems.forEach(function(item, index) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('Location item clicked:', index);
+      
+      const code = this.getAttribute('data-code');
+      const name = this.getAttribute('data-name');
+      const flag = this.getAttribute('data-flag');
+      const currency = this.getAttribute('data-currency');
+      
+      console.log('Selected country data:', { code, name, flag, currency });
+      
+      if (code && name && flag && currency) {
+        selectCountry(code, name, flag, currency);
+      } else {
+        console.error('Missing country data attributes');
+      }
+    });
+
+    // Add hover effect for debugging
+    item.addEventListener('mouseenter', function() {
+      console.log('Hovering over:', this.getAttribute('data-name'));
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!locationSelector.contains(e.target)) {
+      dropdown.classList.remove('show');
+    }
+  });
+
+  // Close dropdown on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      dropdown.classList.remove('show');
+    }
+  });
+}
+
+// Initialize location
+function initializeLocation() {
+  const savedCountry = localStorage.getItem('selectedCountry');
+  
+  if (savedCountry && countryData[savedCountry]) {
+    const country = countryData[savedCountry];
+    selectCountry(savedCountry, country.name, country.flag, country.currency, false);
+  }
+}
+
+// Select country function
+function selectCountry(countryCode, countryName, countryFlag, currency, savePreference = true) {
+  console.log('Selecting country:', { countryCode, countryName, countryFlag, currency });
+  
+  // Update location display
+  const selectedLocationCode = document.getElementById('selectedLocationCode');
+  const selectedLocationName = document.getElementById('selectedLocationName');
+  
+  if (selectedLocationCode) {
+    selectedLocationCode.textContent = countryCode;
+  }
+  
+  if (selectedLocationName) {
+    selectedLocationName.textContent = countryName;
+    selectedLocationName.style.display = '';
+  }
+  
+  // Update currency display
+  const currencyFlag = document.getElementById('currencyFlag');
+  const currencyCode = document.getElementById('currencyCode');
+  
+  if (currencyFlag) {
+    currencyFlag.textContent = countryFlag;
+    currencyFlag.style.display = '';
+  }
+  
+  if (currencyCode) {
+    currencyCode.textContent = currency;
+    currencyCode.style.display = '';
+  }
+  
+  // Save preference
+  if (savePreference) {
+    localStorage.setItem('selectedCountry', countryCode);
+    console.log('Saved country preference:', countryCode);
+  }
+  
+  // Close dropdown
+  const dropdown = document.getElementById('locationDropdown');
+  if (dropdown) {
+    dropdown.classList.remove('show');
+  }
+  
+  // Dispatch custom event
+  const event = new CustomEvent('countryChanged', {
+    detail: { countryCode, countryName, currency }
+  });
+  window.dispatchEvent(event);
+  
+  console.log('Country selection completed');
+}
+
+// Header scroll functionality
+let lastScrollTop = 0;
+let scrollTimeout;
+
+window.addEventListener('scroll', function() {
+  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+  const header = document.querySelector('.custom-header__wrapper');
+  const banner = document.querySelector('.sale-banner');
+  const topRow = document.querySelector('.custom-header__top-row');
+  
+  clearTimeout(scrollTimeout);
+  
+  scrollTimeout = setTimeout(function() {
+    if (currentScroll > lastScrollTop && currentScroll > 100) {
+      if (header) header.classList.add('hidden');
+    } else {
+      if (header) header.classList.remove('hidden');
+    }
+    
+    if (currentScroll > 50) {
+      if (header) header.classList.add('scrolled');
+      if (banner) banner.classList.add('hidden');
+      if (topRow) topRow.classList.add('hidden');
+    } else {
+      if (header) header.classList.remove('scrolled');
+      if (banner) banner.classList.remove('hidden');
+      if (topRow) topRow.classList.remove('hidden');
+    }
+    
+    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+  }, 50);
+});
+
+// Debug function
+window.debugLocation = function() {
+  console.log('=== LOCATION DEBUG ===');
+  console.log('Location selector:', document.getElementById('locationSelector'));
+  console.log('Dropdown:', document.getElementById('locationDropdown'));
+  console.log('Location items:', document.querySelectorAll('.custom-header__location-item').length);
+  console.log('Country data:', countryData);
+};
+
+// Call debug on load
+console.log('Location script loaded. Call debugLocation() for diagnostics.');
+</script>

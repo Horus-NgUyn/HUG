@@ -1,0 +1,979 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+<section 
+  class="ai-video-testimonials-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <style>
+    .ai-video-testimonials-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding }}px 20px;
+      background-color: {{ block.settings.background_color }};
+    }
+    .ai-video-testimonials-container-{{ ai_gen_id }} {
+      max-width: {{ block.settings.max_width }}px;
+      margin: 0 auto;
+    }
+    .ai-video-testimonials-header-{{ ai_gen_id }} {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .ai-video-testimonials-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size }}px;
+      color: {{ block.settings.title_color }};
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+    .ai-video-testimonials-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size }}px;
+      color: {{ block.settings.subtitle_color }};
+      margin: 0;
+    }
+    .ai-video-testimonials-grid-{{ ai_gen_id }} {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      justify-content: center;
+    }
+    .ai-video-testimonial-item-{{ ai_gen_id }} {
+      position: relative;
+      border-radius: {{ block.settings.video_border_radius }}px;
+      overflow: hidden;
+      background-color: #f8f9fa;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ai-video-testimonial-item-{{ ai_gen_id }}:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    .ai-video-wrapper-{{ ai_gen_id }} {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9/16;
+      background-color: #000;
+    }
+    .ai-video-element-{{ ai_gen_id }} {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+    .ai-video-overlay-{{ ai_gen_id }} {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .ai-video-overlay-{{ ai_gen_id }}.hidden {
+      opacity: 0;
+    }
+    .ai-video-play-button-{{ ai_gen_id }} {
+      width: {{ block.settings.play_button_size }}px;
+      height: {{ block.settings.play_button_size }}px;
+      background-color: {{ block.settings.play_button_color }};
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      pointer-events: auto;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .ai-video-play-button-{{ ai_gen_id }}:hover {
+      transform: scale(1.1);
+      background-color: {{ block.settings.play_button_hover_color }};
+    }
+    .ai-video-play-icon-{{ ai_gen_id }} {
+      width: calc({{ block.settings.play_button_size }}px * 0.4);
+      height: calc({{ block.settings.play_button_size }}px * 0.4);
+      color: {{ block.settings.play_button_icon_color }};
+      margin-left: 3px;
+    }
+    .ai-video-content-{{ ai_gen_id }} {
+      padding: 0px;
+      background-color: white;
+    }
+    .ai-video-customer-name-{{ ai_gen_id }} {
+      font-size: 18px;
+      font-weight: 600;
+      color: {{ block.settings.customer_name_color }};
+      margin: 0 0 8px;
+    }
+    .ai-video-customer-title-{{ ai_gen_id }} {
+      font-size: 14px;
+      color: {{ block.settings.customer_title_color }};
+      margin: 0 0 12px;
+      font-style: italic;
+    }
+    .ai-video-testimonial-text-{{ ai_gen_id }} {
+      font-size: 14px;
+      color: {{ block.settings.testimonial_text_color }};
+      line-height: 1.5;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  @media screen and (max-width: 768px) {
+    /* Tăng kích thước video và bo góc thêm */
+    .ai-video-testimonial-item-{{ ai_gen_id }} .ai-video-wrapper-{{ ai_gen_id }} {
+      max-height: 300px;                  /* tăng từ 250px lên 300px */
+      border-radius: 16px;                /* tăng bo góc từ 12px lên 16px */
+      overflow: hidden;
+    }
+
+    /* Giảm cỡ chữ title */
+    .ai-video-testimonials-title-{{ ai_gen_id }} {
+      font-size: 20px !important;                    /* giảm từ 32px xuống 28px */
+    }
+
+    /* Điều chỉnh card flex để giữ 2 hiển thị */
+    .ai-video-testimonials-grid-{{ ai_gen_id }} {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 16px;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 10px;
+    }
+    .ai-video-testimonial-item-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - 16px) / 2);
+      max-width: calc((100% - 16px) / 2);
+      scroll-snap-align: start;
+    }
+
+    /* Giảm cỡ chữ thông tin khách hàng */
+    .ai-video-customer-name-{{ ai_gen_id }} { font-size: 15px; }
+    .ai-video-customer-title-{{ ai_gen_id }} { font-size: 11px; }
+    .ai-video-testimonial-text-{{ ai_gen_id }} {
+      font-size: 12px;
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-video-testimonial-item-{{ ai_gen_id }} .ai-video-wrapper-{{ ai_gen_id }} {
+      max-height: 260px;                  /* mobile rất nhỏ */
+      border-radius: 14px;
+    }
+    .ai-video-testimonials-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+    .ai-video-testimonials-grid-{{ ai_gen_id }} {
+      gap: 12px;
+    }
+    .ai-video-testimonial-item-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - 12px) / 2);
+      max-width: calc((100% - 12px) / 2);
+    }
+    .ai-video-customer-name-{{ ai_gen_id }} { font-size: 14px; }
+    .ai-video-customer-title-{{ ai_gen_id }} { font-size: 10px; }
+    .ai-video-testimonial-text-{{ ai_gen_id }} {
+      font-size: 11px;
+      -webkit-line-clamp: 2;
+    }
+  }
+  </style>
+
+  <div class="ai-video-testimonials-container-{{ ai_gen_id }}">
+    <div class="ai-video-testimonials-header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-video-testimonials-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="ai-video-testimonials-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-video-testimonials-grid-{{ ai_gen_id }}">
+      {% for i in (1..6) %}
+        {% liquid
+          assign video_key = 'video_' | append: i
+          assign thumbnail_key = 'thumbnail_' | append: i
+          assign name_key = 'customer_name_' | append: i
+          assign title_key = 'customer_title_' | append: i
+          assign text_key = 'testimonial_text_' | append: i
+
+          assign video_file = block.settings[video_key]
+          assign thumbnail_image = block.settings[thumbnail_key]
+          assign customer_name = block.settings[name_key]
+          assign customer_title = block.settings[title_key]
+          assign testimonial_text = block.settings[text_key]
+        %}
+        {% if video_file != blank %}
+          <div class="ai-video-testimonial-item-{{ ai_gen_id }}">
+            <div class="ai-video-wrapper-{{ ai_gen_id }}">
+              {% liquid
+                assign video_url = ''
+                assign poster_url = ''
+                if video_file.sources and video_file.sources.size > 0
+                  assign mp4_source = video_file.sources | where: 'format', 'mp4' | first
+                  if mp4_source
+                    assign video_url = mp4_source.url
+                  else
+                    assign video_url = video_file.sources[0].url
+                  endif
+                else
+                  assign video_url = video_file
+                endif
+                if thumbnail_image
+                  assign poster_url = thumbnail_image | image_url: width: 400
+                elsif video_file.preview_image
+                  assign poster_url = video_file.preview_image | image_url: width: 400
+                endif
+              %}
+              <video
+                class="ai-video-element-{{ ai_gen_id }}"
+                preload="auto"
+                playsinline
+                webkit-playsinline
+                crossorigin="anonymous"
+                data-video-index="{{ i }}"
+                {% if poster_url != blank %} poster="{{ poster_url }}" {% endif %}
+              >
+                <source src="{{ video_url }}" type="video/mp4">
+                <source src="{{ video_url }}" type="video/quicktime">
+                <source src="{{ video_url }}" type="video/webm">
+                <source src="{{ video_url }}" type="video/x-msvideo">
+                Video không được hỗ trợ trên trình duyệt này.
+              </video>
+
+              <div class="ai-video-overlay-{{ ai_gen_id }}" data-video-index="{{ i }}">
+                <button
+                  class="ai-video-play-button-{{ ai_gen_id }}"
+                  aria-label="Phát video testimonial"
+                  data-video-index="{{ i }}"
+                >
+                  <svg
+                    class="ai-video-play-icon-{{ ai_gen_id }}"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {% if customer_name or customer_title or testimonial_text %}
+              <div class="ai-video-content-{{ ai_gen_id }}">
+                {% if customer_name %}<h3 class="ai-video-customer-name-{{ ai_gen_id }}">{{ customer_name }}</h3>{% endif %}
+                {% if customer_title %}<p class="ai-video-customer-title-{{ ai_gen_id }}">{{ customer_title }}</p>{% endif %}
+                {% if testimonial_text %}<p class="ai-video-testimonial-text-{{ ai_gen_id }}">{{ testimonial_text }}</p>{% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  class VideoTestimonials{{ ai_gen_id }} {
+    constructor() {
+      this.videos = new Map();
+      this.currentlyPlaying = null;
+      this.sectionElement = null;
+      this.hasAutoPlayed = false;
+      this.observer = null;
+      document.addEventListener('DOMContentLoaded', () => this.init());
+    }
+
+    init() {
+      console.log('🎬 VideoTestimonials init started');
+      this.sectionElement = document.querySelector('.ai-video-testimonials-{{ ai_gen_id }}');
+      console.log('📺 Section element found:', this.sectionElement);
+      
+      this.collectVideos();
+      console.log('🎥 Videos collected:', this.videos.size);
+      
+      this.bindPlayButtons();
+      this.setupIntersectionObserver();
+      
+      // Kiểm tra ngay lập tức nếu section đã visible
+      setTimeout(() => {
+        console.log('🔍 Checking initial visibility...');
+        this.checkInitialVisibility();
+      }, 100);
+
+      // Fallback: Nếu sau 2 giây vẫn chưa autoplay, thử force trigger
+      setTimeout(() => {
+        if (!this.hasAutoPlayed && this.videos.size > 0) {
+          console.log('⚡ Fallback: Force triggering autoplay after 2s');
+          this.autoPlayFirstVideo();
+          this.hasAutoPlayed = true;
+        }
+      }, 2000);
+    }
+
+    collectVideos() {
+      document.querySelectorAll('.ai-video-element-{{ ai_gen_id }}').forEach((video, idx) => {
+        const index = idx + 1;
+        const wrapper = video.closest('.ai-video-wrapper-{{ ai_gen_id }}');
+        const overlay = wrapper.querySelector('.ai-video-overlay-{{ ai_gen_id }}');
+        const loading = wrapper.querySelector('.ai-video-loading-{{ ai_gen_id }}');
+        const error = wrapper.querySelector('.ai-video-error-{{ ai_gen_id }}');
+        this.videos.set(index, { video, overlay, loading, error, isPlaying: false });
+
+        video.addEventListener('click', () => this.pauseVideo(index));
+        video.addEventListener('error', (e) => {
+          console.log('❌ Video error for index', index, ':', e);
+          if (loading) loading.classList.remove('active');
+          if (error) error.classList.add('active');
+        });
+        video.addEventListener('loadstart', () => {
+          console.log('📥 Video loadstart for index', index);
+          if (loading) loading.classList.add('active');
+          if (error) error.classList.remove('active');
+        });
+        video.addEventListener('loadedmetadata', () => {
+          console.log('📊 Video metadata loaded for index', index);
+          if (loading) loading.classList.remove('active');
+        });
+        video.addEventListener('canplay', () => {
+          console.log('▶️ Video canplay for index', index);
+          if (loading) loading.classList.remove('active');
+        });
+        video.addEventListener('ended', () => this.pauseVideo(index));
+        
+        // Add crossorigin attribute để tránh CORS issues
+        video.crossOrigin = 'anonymous';
+        
+        // Handle postMessage errors
+        window.addEventListener('error', (e) => {
+          if (e.message && e.message.includes('postMessage')) {
+            console.log('🚫 PostMessage error caught and ignored:', e.message);
+            e.preventDefault();
+            return false;
+          }
+        });
+      });
+    }
+
+    bindPlayButtons() {
+      document.querySelectorAll('.ai-video-play-button-{{ ai_gen_id }}').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const idx = parseInt(btn.dataset.videoIndex);
+          this.playVideo(idx);
+        });
+      });
+    }
+
+    playVideo(index) {
+      const data = this.videos.get(index);
+      if (!data) return;
+      if (this.currentlyPlaying && this.currentlyPlaying !== index) {
+        this.pauseVideo(this.currentlyPlaying);
+      }
+      const { video, overlay } = data;
+      overlay.classList.add('hidden');
+      
+      // Sử dụng logic muted fallback thống nhất
+      video.muted = false;
+      this.safeVideoPlay(video).then(() => {
+        data.isPlaying = true;
+        this.currentlyPlaying = index;
+      }).catch(() => {
+        // Fallback với muted
+        video.muted = true;
+        this.safeVideoPlay(video).then(() => {
+          data.isPlaying = true;
+          this.currentlyPlaying = index;
+          this.setupUnmuteOnInteraction(video, data);
+        }).catch(() => {
+          overlay.classList.remove('hidden');
+          this.retryVideoLoad(video, data, index);
+        });
+      });
+    }
+
+    pauseVideo(index) {
+      const data = this.videos.get(index);
+      if (!data) return;
+      data.video.pause();
+      data.overlay.classList.remove('hidden');
+      data.isPlaying = false;
+      if (this.currentlyPlaying === index) this.currentlyPlaying = null;
+    }
+
+    setupIntersectionObserver() {
+      if (!this.sectionElement) return;
+      
+      const options = {
+        root: null,
+        rootMargin: '50px', // Trigger sớm hơn 50px trước khi section vào viewport
+        threshold: 0.2 // Chỉ cần 20% section visible để trigger
+      };
+
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          console.log('👁️ Intersection change:', {
+            isIntersecting: entry.isIntersecting,
+            intersectionRatio: entry.intersectionRatio,
+            hasAutoPlayed: this.hasAutoPlayed
+          });
+          
+          if (entry.isIntersecting && !this.hasAutoPlayed) {
+            console.log('🚀 Triggering autoplay...');
+            // Tự động phát video đầu tiên khi section vào viewport
+            this.autoPlayFirstVideo();
+            this.hasAutoPlayed = true;
+          } else if (!entry.isIntersecting && this.currentlyPlaying) {
+            console.log('⏸️ Pausing current video (out of viewport)');
+            // Tạm dừng video hiện tại khi section ra khỏi viewport
+            this.pauseCurrentVideo();
+          }
+        });
+      }, options);
+
+      this.observer.observe(this.sectionElement);
+    }
+
+    autoPlayFirstVideo() {
+      console.log('🎯 autoPlayFirstVideo called, hasAutoPlayed:', this.hasAutoPlayed);
+      if (this.hasAutoPlayed) return;
+      
+      // Tìm video đầu tiên có sẵn
+      const firstVideoIndex = Array.from(this.videos.keys()).sort((a, b) => a - b)[0];
+      console.log('🔍 Sorted video keys:', Array.from(this.videos.keys()).sort((a, b) => a - b));
+
+      console.log('🎮 First video index found:', firstVideoIndex);
+      console.log('📊 All video keys:', Array.from(this.videos.keys()));
+
+      if (firstVideoIndex) {
+        const data = this.videos.get(firstVideoIndex);
+        const video = data.video;
+        console.log('📹 Video element:', video);
+        console.log('🔧 Video readyState:', video.readyState);
+        
+        // Đảm bảo video đã load metadata trước khi phát
+        if (video.readyState >= 1) { // HAVE_METADATA - đủ để bắt đầu phát
+          this.playVideoWithMutedFallback(firstVideoIndex);
+        } else {
+          // Đợi video load metadata
+          const onReadyToPlay = () => {
+            video.removeEventListener('loadedmetadata', onReadyToPlay);
+            video.removeEventListener('canplay', onReadyToPlay);
+            // Delay nhỏ để video thực sự sẵn sàng
+            requestAnimationFrame(() => {
+              this.playVideoWithMutedFallback(firstVideoIndex);
+            });
+          };
+          
+          video.addEventListener('loadedmetadata', onReadyToPlay);
+          video.addEventListener('canplay', onReadyToPlay);
+          
+          // Force load nếu chưa bắt đầu
+          if (video.readyState === 0) {
+            video.load();
+          }
+          
+          // Fallback timeout
+          setTimeout(() => {
+            video.removeEventListener('loadedmetadata', onReadyToPlay);
+            video.removeEventListener('canplay', onReadyToPlay);
+            this.playVideoWithMutedFallback(firstVideoIndex);
+          }, 3000);
+        }
+      }
+    }
+
+    playVideoWithMutedFallback(index) {
+      console.log('▶️ playVideoWithMutedFallback called for index:', index);
+      const data = this.videos.get(index);
+      if (!data) {
+        console.log('❌ No data found for video index:', index);
+        return;
+      }
+      
+      if (this.currentlyPlaying && this.currentlyPlaying !== index) {
+        console.log('⏹️ Stopping currently playing video:', this.currentlyPlaying);
+        this.pauseVideo(this.currentlyPlaying);
+      }
+      
+      const { video, overlay } = data;
+      console.log('🎭 Hiding overlay for video:', index);
+      overlay.classList.add('hidden');
+      
+      // Thử phát với âm thanh trước (autoplay policy)
+      console.log('🔊 Attempting to play with sound...');
+      video.muted = false;
+      
+      // Wrap video.play() with additional error handling
+      this.safeVideoPlay(video).then(() => {
+        console.log('✅ Video playing with sound successfully!');
+        // Thành công với âm thanh
+        data.isPlaying = true;
+        this.currentlyPlaying = index;
+      }).catch((error) => {
+        console.log('🔇 Sound play failed, trying muted:', error);
+        // Thất bại với âm thanh, thử phát im lặng
+        video.muted = true;
+        this.safeVideoPlay(video).then(() => {
+          console.log('✅ Video playing muted successfully!');
+          data.isPlaying = true;
+          this.currentlyPlaying = index;
+          
+          // Đợi người dùng tương tác để bật âm thanh
+          this.setupUnmuteOnInteraction(video, data);
+        }).catch((mutedError) => {
+          console.log('❌ Muted play also failed:', mutedError);
+          // Thất bại hoàn toàn, hiện lại overlay
+          overlay.classList.remove('hidden');
+          // Thử load lại video nếu có thể
+          this.retryVideoLoad(video, data, index);
+        });
+      });
+    }
+
+    setupUnmuteOnInteraction(video, data) {
+      // Tạo event listener một lần để unmute khi có tương tác
+      const unmuteHandler = () => {
+        if (data.isPlaying && !video.paused && video.muted) {
+          video.muted = false;
+        }
+        // Xóa listeners sau khi đã unmute
+        document.removeEventListener('click', unmuteHandler);
+        document.removeEventListener('scroll', unmuteHandler);
+        document.removeEventListener('touchstart', unmuteHandler);
+      };
+
+      // Lắng nghe các tương tác của người dùng
+      document.addEventListener('click', unmuteHandler, { once: true });
+      document.addEventListener('scroll', unmuteHandler, { once: true });
+      document.addEventListener('touchstart', unmuteHandler, { once: true });
+    }
+
+    checkInitialVisibility() {
+      console.log('🔍 checkInitialVisibility called');
+      if (!this.sectionElement || this.hasAutoPlayed) {
+        console.log('❌ Early return:', { sectionElement: !!this.sectionElement, hasAutoPlayed: this.hasAutoPlayed });
+        return;
+      }
+      
+      const rect = this.sectionElement.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      
+      console.log('📐 Section position:', {
+        top: rect.top,
+        bottom: rect.bottom,
+        windowHeight: window.innerHeight,
+        isVisible: isVisible
+      });
+      
+      if (isVisible) {
+        console.log('✅ Section is visible, triggering autoplay');
+        this.autoPlayFirstVideo();
+        this.hasAutoPlayed = true;
+      } else {
+        console.log('❌ Section not visible yet');
+      }
+    }
+
+    pauseCurrentVideo() {
+      if (this.currentlyPlaying) {
+        this.pauseVideo(this.currentlyPlaying);
+      }
+    }
+
+    safeVideoPlay(video) {
+      return new Promise((resolve, reject) => {
+        try {
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.then(resolve).catch(reject);
+          } else {
+            // Fallback cho browsers cũ
+            resolve();
+          }
+        } catch (error) {
+          console.log('🚫 Video.play() threw synchronous error:', error);
+          reject(error);
+        }
+      });
+    }
+
+    retryVideoLoad(video, data, index) {
+      console.log('🔄 Attempting to retry video load for index:', index);
+      try {
+        // Reset video state
+        video.load();
+        
+        // Thử lại sau delay ngắn
+        setTimeout(() => {
+          if (video.readyState >= 1) {
+            console.log('🔄 Retry play after reload');
+            this.safeVideoPlay(video).then(() => {
+              console.log('✅ Retry successful!');
+              data.isPlaying = true;
+              this.currentlyPlaying = index;
+              data.overlay.classList.add('hidden');
+            }).catch(() => {
+              console.log('❌ Retry also failed');
+            });
+          }
+        }, 1000);
+      } catch (error) {
+        console.log('❌ Video reload failed:', error);
+      }
+    }
+
+    // Cleanup khi component bị destroy
+    destroy() {
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  }
+
+  new VideoTestimonials{{ ai_gen_id }}();
+</script>
+
+
+{% schema %}
+{
+  "name": "Video Testimonials",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Nội dung Section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Tiêu đề section",
+      "default": "Khách hàng nói gì về chúng tôi"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Phụ đề section",
+      "default": "Những câu chuyện thật từ khách hàng thật"
+    },
+    {
+      "type": "header",
+      "content": "Cài đặt Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Chiều rộng tối đa",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Khoảng cách section",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Cài đặt Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Màu nền",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Màu tiêu đề",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Kích thước tiêu đề",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Màu phụ đề",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Kích thước phụ đề",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "video_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Bo góc video",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Nút Play"
+    },
+    {
+      "type": "range",
+      "id": "play_button_size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Kích thước nút play",
+      "default": 60
+    },
+    {
+      "type": "color",
+      "id": "play_button_color",
+      "label": "Màu nút play",
+      "default": "#ff0000"
+    },
+    {
+      "type": "color",
+      "id": "play_button_hover_color",
+      "label": "Màu nút play khi hover",
+      "default": "#cc0000"
+    },
+    {
+      "type": "color",
+      "id": "play_button_icon_color",
+      "label": "Màu icon play",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Màu chữ khách hàng"
+    },
+    {
+      "type": "color",
+      "id": "customer_name_color",
+      "label": "Màu tên khách hàng",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "customer_title_color",
+      "label": "Màu chức danh khách hàng",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_text_color",
+      "label": "Màu text testimonial",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Video 1"
+    },
+    {
+      "type": "video",
+      "id": "video_1",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_1",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_1",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_1",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_1",
+      "label": "Nội dung testimonial"
+    },
+    {
+      "type": "header",
+      "content": "Video 2"
+    },
+    {
+      "type": "video",
+      "id": "video_2",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_2",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_2",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_2",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_2",
+      "label": "Nội dung testimonial"
+    },
+    {
+      "type": "header",
+      "content": "Video 3"
+    },
+    {
+      "type": "video",
+      "id": "video_3",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_3",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_3",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_3",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_3",
+      "label": "Nội dung testimonial"
+    },
+    {
+      "type": "header",
+      "content": "Video 4"
+    },
+    {
+      "type": "video",
+      "id": "video_4",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_4",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_4",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_4",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_4",
+      "label": "Nội dung testimonial"
+    },
+    {
+      "type": "header",
+      "content": "Video 5"
+    },
+    {
+      "type": "video",
+      "id": "video_5",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_5",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_5",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_5",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_5",
+      "label": "Nội dung testimonial"
+    },
+    {
+      "type": "header",
+      "content": "Video 6"
+    },
+    {
+      "type": "video",
+      "id": "video_6",
+      "label": "File video (.MP4 khuyến nghị, .MOV cần H.264 codec)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thumbnail_6",
+      "label": "Thumbnail tùy chỉnh (tùy chọn)"
+    },
+    {
+      "type": "text",
+      "id": "customer_name_6",
+      "label": "Tên khách hàng"
+    },
+    {
+      "type": "text",
+      "id": "customer_title_6",
+      "label": "Chức danh khách hàng"
+    },
+    {
+      "type": "textarea",
+      "id": "testimonial_text_6",
+      "label": "Nội dung testimonial"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Testimonials"
+    }
+  ]
+}
+{% endschema %}
